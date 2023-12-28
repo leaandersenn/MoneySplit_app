@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "533403659744",
+    "project_id": "moneysplit-64ca6",
+    "storage_bucket": "moneysplit-64ca6.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:533403659744:android:004f8f85ad631d1b608f85",
+        "android_client_info": {
+          "package_name": "com.bendingspoons.amk.moneysplit"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDygaDWKBoyemaaO-MrjBBfZAiHqocPkdM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

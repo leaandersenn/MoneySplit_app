@@ -1,4 +1,5 @@
 #import "AppDelegate.h"
+#import <Firebase/Firebase.h>
 
 #import <React/RCTBundleURLProvider.h>
 #import <React/RCTLinkingManager.h>
@@ -7,6 +8,9 @@
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
+  //Firebase
+  [FIRApp configure];
+
   self.moduleName = @"main";
 
   // You can add your custom initial props in the dictionary below.

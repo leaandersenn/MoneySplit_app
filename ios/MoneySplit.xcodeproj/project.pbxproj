@@ -62,12 +62,12 @@
 		13B07FAE1A68108700A75B9A /* MoneySplit */ = {
 			isa = PBXGroup;
 			children = (
-				89D463D12B3E1A6E001D9FC1 /* GoogleService-Info.plist */,
 				BB2F792B24A3F905000567C9 /* Supporting */,
 				13B07FAF1A68108700A75B9A /* AppDelegate.h */,
 				13B07FB01A68108700A75B9A /* AppDelegate.mm */,
 				13B07FB51A68108700A75B9A /* Images.xcassets */,
 				13B07FB61A68108700A75B9A /* Info.plist */,
+				89D463D12B3E1A6E001D9FC1 /* GoogleService-Info.plist */,
 				13B07FB71A68108700A75B9A /* main.m */,
 				AA286B85B6C04FC6940260E9 /* SplashScreen.storyboard */,
 				B908333F541C41C38CF59D20 /* noop-file.swift */,
