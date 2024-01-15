@@ -1,6 +1,6 @@
 import React from 'react';
 import { TouchableOpacity, Text, StyleSheet } from 'react-native';
-import { StyledButtonProps } from './types';
+import { StyledButtonProps } from '../types';
 
 
 export const ForgotPasswordButton = (props: StyledButtonProps) => {
