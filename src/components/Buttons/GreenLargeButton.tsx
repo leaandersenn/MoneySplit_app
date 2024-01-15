@@ -1,7 +1,7 @@
 import React from 'react';
 import { TouchableOpacity, Text, StyleSheet, ViewStyle, TextStyle } from 'react-native';
 import { SmallText } from '../Text/SmallText';
-import { StyledButtonProps } from './types';
+import { StyledButtonProps } from '../types';
 
 
 
