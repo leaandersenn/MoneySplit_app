@@ -57,11 +57,11 @@ export default function LogInScreen({ navigation}: Props) {
            
             <TextInputField value={email} placeholder='Email' onChangeText={setEmail} />
             <PasswordInput  value={password} placeholder='Password' onChangeText={setPassword} />
-            <Spacer size={24} />
+            <Spacer size={24} horizontal={false}/>
            
             <View style={styles.rememberForgot}>
                 <XSmallText children={"Remember me"}/>
-                <Spacer size={14} horizontal={'horizontal'} />
+                <Spacer size={14} horizontal={true} />
                 <ForgotPasswordButton title={"Forgot Password?"} onClick={forgotPassword} />  
             </View>
             

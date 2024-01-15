@@ -5,7 +5,7 @@ import PropTypes from 'prop-types';
 //Use this to add in horizontal or vertical spacing between elements
 
 interface Props {
-    horizontal: String,
+    horizontal: boolean,
     size: number
 }
 

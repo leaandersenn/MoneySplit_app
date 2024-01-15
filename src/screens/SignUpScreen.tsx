@@ -44,7 +44,7 @@ export default function LogInScreen() {
                 <LargeText children={"MoneySplit"} />
                 <View style={styles.signUp}>
                     <BackButton />
-                    <Spacer size={45} horizontal={'horizontal'}/>
+                    <Spacer size={45} horizontal={true}/>
                     <MediumText children={"Sign Up"} />
                 </View>
             </View>
@@ -53,9 +53,9 @@ export default function LogInScreen() {
             <TextInputField value={name} placeholder='Email' onChangeText={setEmail}/>
             
             <PasswordInput value={password} placeholder='Password' onChangeText={setPassword} />
-            <Spacer size={21} />
+            <Spacer size={21} horizontal={false}/>
             <PasswordInput value={checkPassword} placeholder='Confirm Password' onChangeText={setCheckPassword} />
-            <Spacer size={21} />
+            <Spacer size={21} horizontal={false}/>
             
             <GreenLargeButton title='Sign Up' onClick={signUp}></GreenLargeButton>
             <DividerWithText title={'Or sign up with'}/>
