@@ -16,6 +16,7 @@ const styles = StyleSheet.create({
     text: {
         color: 'rgba(74, 74, 74, 0.57)',
         fontSize: 15,
+        textDecorationLine: 'underline'
     },
     input: {
         borderRadius: 20,
