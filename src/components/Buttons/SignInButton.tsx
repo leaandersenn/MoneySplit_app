@@ -1,7 +1,6 @@
 import React from 'react';
-import { TouchableOpacity, Text, StyleSheet, ViewStyle, TextStyle } from 'react-native';
-import { SmallText } from '../Text/SmallText';
-import { StyledButtonProps } from './types';
+import { TouchableOpacity, Text, StyleSheet } from 'react-native';
+import { StyledButtonProps } from '../types';
 
 
 export const SignInButton = (props: StyledButtonProps) => {
