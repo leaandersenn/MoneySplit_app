@@ -3,6 +3,7 @@ import { getAnalytics } from "firebase/analytics";
 import { getAuth } from "firebase/auth";
 import { getFirestore} from "firebase/firestore";
 
+
 const firebaseConfig = {
   apiKey: "AIzaSyD_aJLN16EskdvdNBBM87IQIvLah-A2_l4",
   authDomain: "moneysplit-64ca6.firebaseapp.com",
@@ -12,6 +13,7 @@ const firebaseConfig = {
   appId: "1:533403659744:web:60451f06372536ea608f85",
   measurementId: "G-9SFG3P6Z4H"
 };
+
 
 
 export const app = initializeApp(firebaseConfig);
