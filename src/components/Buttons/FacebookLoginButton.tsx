@@ -3,12 +3,16 @@ import { TouchableOpacity, Text, StyleSheet, View, Image } from 'react-native';
 import { StyledButtonProps } from '../types';
 import * as FaceBook from 'expo-auth-session/providers/facebook';
 import * as WebBrowser from 'expo-web-browser';
+import { useUserContext } from '../Context/userContext';
+import { FIREBASE_AUTH } from '../../../firebaseConfig';
+import { AccessToken, LoginManager } from 'react-native-fbsdk-next';
+import Auth, { signInWithCredential } from 'firebase/auth';
 
 WebBrowser.maybeCompleteAuthSession();
 
 export default function FaceBookLogin() {
 
-    const [user, setUser] = useState(null);
+    /* const [user, setUser] = useState(null);
     const [request, response, promptAsync] = FaceBook.useAuthRequest({
         clientId: "1414315359174188",
     })
@@ -36,9 +40,34 @@ export default function FaceBookLogin() {
         }
     
     }
+ */
+    useEffect(() => {
+        (async()  => {
+            // Attempt login with permissions
+            const result = await LoginManager.logInWithPermissions(['public_profile', 'email']);
+    
+            if (result.isCancelled) {
+                throw 'User cancelled the login process';
+            }
+    
+            // Once signed in, get the users AccessToken
+            const data = await AccessToken.getCurrentAccessToken();
+    
+            if (!data) {
+                throw 'Something went wrong obtaining access token';
+            }
+    
+            // Create a Firebase credential with the AccessToken
+            const facebookCredential = Auth.FacebookAuthProvider.credential(data.accessToken);
+    
+            // Sign-in the user with the credential
+            return signInWithCredential(FIREBASE_AUTH, facebookCredential);   
+        }
+        )
+    })
 
     return (
-        <TouchableOpacity onPress={handlePressAsync} style={styles.button}>
+        <TouchableOpacity style={styles.button}>
             <Image source={require('../../../assets/Facebook_circle_pictogram.svg.png')} style={styles.icon} />
             <Text style={styles.text}>FaceBook</Text>
         </TouchableOpacity> 

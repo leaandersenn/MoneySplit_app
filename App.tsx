@@ -6,18 +6,24 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator, NativeStackNavigationProp } from '@react-navigation/native-stack';
 import LogInScreen from './src/screens/LogInScreen';
 import SignUpScreen from './src/screens/SignUpScreen';
+import AfterLoginScreen from './src/screens/AfterLoginScreen';
+import { LogBox } from 'react-native';
+LogBox.ignoreLogs(['new NativeEventEmitter']); // Ignore log notification by message
+LogBox.ignoreAllLogs()
 
 import { SmallText } from "./src/components/Text/SmallText";
 import { MediumText } from './src/components/Text/MediumText';
 import { LargeText } from './src/components/Text/LargeText';
 import { XSmallText } from './src/components/Text/XSmallText';
-
+import { UserContextProvider } from './src/components/Context/userContext';
+import { registerRootComponent } from 'expo';
 
 
 type RootStackParamList = {
   Home: undefined;
   LogIn: undefined;
   SignUp: undefined;
+  AfterLogin: undefined;
 };
 
 type HomeScreenNavigationProp = NativeStackNavigationProp<RootStackParamList, 'Home'>;
@@ -68,15 +74,20 @@ export default function App() {
   }
 
   return (
-    <NavigationContainer>
-      <Stack.Navigator initialRouteName='Home' screenOptions={{ headerShown: false }}>
-        <Stack.Screen name="Home" component={HomeScreen} />
-        <Stack.Screen name="LogIn" component={LogInScreen} />
-        <Stack.Screen name="SignUp" component={SignUpScreen} />
-      </Stack.Navigator>
-    </NavigationContainer>
+    <UserContextProvider>
+      <NavigationContainer>
+        <Stack.Navigator initialRouteName='Home' screenOptions={{ headerShown: false }}>
+          <Stack.Screen name="Home" component={HomeScreen} />
+          <Stack.Screen name="LogIn" component={LogInScreen} />
+          <Stack.Screen name="SignUp" component={SignUpScreen} />
+          <Stack.Screen name="AfterLogin" component={AfterLoginScreen} />
+        </Stack.Navigator>
+      </NavigationContainer>
+    </UserContextProvider>
   );
 }
+
+registerRootComponent(App);
 
 const styles = StyleSheet.create({
   container: {

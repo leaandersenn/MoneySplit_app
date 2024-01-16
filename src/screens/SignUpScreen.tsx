@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { StyleSheet, View } from 'react-native';
+import { Button, StyleSheet, View } from 'react-native';
 import { LargeText } from '../components/Text/LargeText';
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import { FIREBASE_AUTH } from '../../firebaseConfig';
@@ -11,6 +11,8 @@ import DividerWithText from '../components/Styling/Divider';
 import PasswordInput from '../components/InputFields/PasswordInput';
 import TextInputField from '../components/InputFields/TextInputField';
 import FaceBookLogin from '../components/Buttons/FacebookLoginButton';
+import { useUserContext } from '../components/Context/userContext';
+import { FirebaseError } from 'firebase/app';
 
 export default function LogInScreen() {
     
@@ -18,18 +20,27 @@ export default function LogInScreen() {
     const [lastName, setLastName] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-    
-    const auth = FIREBASE_AUTH;
+    const { registerUser, logoutUser } = useUserContext();
 
-    const signUp = async () => {
-            try {
-                const response = await createUserWithEmailAndPassword(auth, email, password);
-                console.log(response);
-            } catch (error) {
-                console.log(error);
-                alert('Sign up failed');
+    const onSubmit = async () => {
+        try {
+            if (email && password && name && lastName) {
+            console.log("Email" + email + "prøver å logge inn")
+            await registerUser({email, password, name, lastName});
+            console.log("her er brukeren" + FIREBASE_AUTH.currentUser?.email)
             } 
+        } catch (error) {
+            console.log(error);
+            alert('Sign up failed');
         }
+    }
+
+
+    const handleSignout = async () => {
+        await logoutUser();
+        console.log("User signed out");
+        console.log(FIREBASE_AUTH.currentUser + ": current user");
+    }
     
 
     return (
@@ -49,9 +60,9 @@ export default function LogInScreen() {
             <PasswordInput value={password} placeholder='Password' onChangeText={setPassword} />
             <Spacer size={21} horizontal={false}/>
             
-            <GreenLargeButton title='Sign Up' onClick={signUp}></GreenLargeButton>
+            <GreenLargeButton title='Sign Up' onPress={onSubmit}></GreenLargeButton>
             <DividerWithText title={'Or sign up with'}/>
-
+            <Button title='sign out' onPress={handleSignout} />
             <FaceBookLogin/>
         </View>
     )
