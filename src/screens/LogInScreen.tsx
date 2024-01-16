@@ -12,7 +12,7 @@ import DividerWithText from '../components/Styling/Divider';
 import Spacer from '../components/Styling/Spacer';
 import TextInputField from '../components/InputFields/TextInputField';
 import PasswordInput from '../components/InputFields/PasswordInput';
-import FaceBookLogin from '../components/Buttons/FacebookLoginButton';
+/* import FaceBookLogin from '../components/Buttons/FacebookLoginButton'; */
 import { useUserContext } from '../components/Context/userContext';
 
 type RootStackParamList = {
@@ -82,7 +82,7 @@ export default function LogInScreen({ navigation }: Props) {
             <DividerWithText title={"Or login with"}/>
             
             
-            <FaceBookLogin />            
+     {/*        <FaceBookLogin /> */}            
 
             <View style={styles.registeredText}>
                 <XSmallText children={"Don´t have an account? "} />
