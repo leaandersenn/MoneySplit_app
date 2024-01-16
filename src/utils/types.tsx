@@ -22,3 +22,9 @@ export type PaymentType = {
     participants: Map<string, string>;
     relatedSplitsId: string[];
 }
+
+export type User = {
+    id: string;
+    firstName: string
+    lastName: string
+}
