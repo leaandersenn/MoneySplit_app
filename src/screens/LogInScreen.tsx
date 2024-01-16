@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { StyleSheet, View } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { StyleSheet, View, Button, Image, Text} from 'react-native';
 import { LargeText } from '../components/Text/LargeText';
 import {signInWithEmailAndPassword } from "firebase/auth";
 import { FIREBASE_AUTH } from '../../firebaseConfig';
@@ -8,12 +8,15 @@ import { GreenLargeButton } from '../components/Buttons/GreenLargeButton';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { XSmallText } from '../components/Text/XSmallText';
 import { SignInButton } from '../components/Buttons/SignInButton';
+import * as FaceBook from 'expo-auth-session/providers/facebook';
+import * as WebBrowser from 'expo-web-browser';
 
 import { ForgotPasswordButton } from '../components/Buttons/ForgotPasswordButton';
-import DividerWithText from '../components/Divider';
-import Spacer from '../components/Spacer';
+import DividerWithText from '../components/Styling/Divider';
+import Spacer from '../components/Styling/Spacer';
 import TextInputField from '../components/InputFields/TextInputField';
 import PasswordInput from '../components/InputFields/PasswordInput';
+import { FaceBookLogin } from '../components/Buttons/FacebookLoginButton';
 
 type RootStackParamList = {
     LogIn: undefined;
@@ -26,17 +29,49 @@ type RootStackParamList = {
     navigation: LogInScreenNavigationProp;
   };
 
-export default function LogInScreen({ navigation}: Props) {
+  WebBrowser.maybeCompleteAuthSession();
+
+export default function LogInScreen({ navigation }: Props) {
 
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const [user, setUser] = useState(null);
   
     const auth = FIREBASE_AUTH;
+
+    const [request, response, promptAsync] = FaceBook.useAuthRequest({
+        clientId: "1414315359174188",
+    })
+
+    useEffect(() => {
+        if(response && response.type === "success" && response.authentication) {
+            (async () => {
+                if (response.authentication) {
+                    const userInfoResponse = await fetch(
+                        `https://graph.facebook.com/me?access_token=${response.authentication.accessToken}&fields=id,name,picture.type(large)`
+                );
+                const userInfo = await userInfoResponse.json();
+                setUser(userInfo);
+                console.log(userInfo.name + "userinfo")
+                }
+            })();
+        }
+    }, [response])
+
+    const handlePressAsync = async () => {
+        const result = await promptAsync();
+        if(result.type !== 'success') {
+            alert('Uh no, something went wrong!');
+            return;
+        }
+    }
+
 
     const signIn = async () => {
         try {
             const response = await signInWithEmailAndPassword(auth, email, password);
             console.log(response);
+
         } catch (error) {
             console.log(error);
             alert('Email or password is wrong');
@@ -67,17 +102,40 @@ export default function LogInScreen({ navigation}: Props) {
             
             <GreenLargeButton title='Sign In' onClick={signIn} />
             <DividerWithText title={"Or login with"}/>
-
-            {/* TODO: ADD in Google Component*/}
-            <GreenLargeButton title='Log In with Google' onClick={signIn} />
+            
+            <View style={styles.container}>
+                {user ? (
+                    <Profile user={user}></Profile>
+                ) : (
+                    <FaceBookLogin title='FaceBook' onClick={handlePressAsync}/>
+                )
+            }
+            </View>
 
             <View style={styles.registeredText}>
                 <XSmallText children={"Don´t have an account? "} />
                 <SignInButton title={"Sign Up"} onClick={() => navigation.navigate('SignUp')} />
             </View>
+
         </View>
     )
 };
+
+interface User {
+    name: string,
+    id: string
+}
+interface ProfileProps {
+    user: User
+}
+function Profile( { user }: ProfileProps) {
+    return(
+        <View style={styles.profile}>
+            <Text>Name: {user.name}</Text>
+            <Text>ID: {user.id}</Text>
+        </View>
+    )
+}
 
 const styles = StyleSheet.create({
     container: {
@@ -99,6 +157,9 @@ const styles = StyleSheet.create({
     topText: {
         marginBottom: 56,
         gap: 36,
+        alignItems: 'center'
+    },
+    profile: {
         alignItems: 'center'
     }
 });

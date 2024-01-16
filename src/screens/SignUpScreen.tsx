@@ -4,11 +4,10 @@ import { LargeText } from '../components/Text/LargeText';
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import { FIREBASE_AUTH } from '../../firebaseConfig';
 import { MediumText } from '../components/Text/MediumText';
-
 import { GreenLargeButton } from '../components/Buttons/GreenLargeButton';
 import BackButton from '../components/Buttons/BackButton';
-import Spacer from '../components/Spacer';
-import DividerWithText from '../components/Divider';
+import Spacer from '../components/Styling/Spacer';
+import DividerWithText from '../components/Styling/Divider';
 import PasswordInput from '../components/InputFields/PasswordInput';
 import TextInputField from '../components/InputFields/TextInputField';
 
