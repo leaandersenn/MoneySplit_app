@@ -26,6 +26,7 @@
     "firebase": "^10.7.1",
     "react": "18.2.0",
     "react-native": "0.72.6",
+    "react-native-elements": "^3.4.3",
     "react-native-picker-select": "^9.0.0",
     "react-native-svg": "13.9.0",
     "react-native-vector-icons": "^10.0.3",
