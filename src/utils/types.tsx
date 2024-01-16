@@ -14,7 +14,7 @@ export interface TextProps {
 
 //Types
 export type UserType = {
-    id: string,
+    id: DocumentReference,
     firstName: string, 
     lastName: string, 
     email: string, 
@@ -25,8 +25,8 @@ export type UserType = {
 
 export type PaymentType = {
     id: string,
-    creator: number;
-    sumOfPayment: number;
+    creator: DocumentReference;
+    amount: number;
     title: string;
     participants: Map<string, number>;
     relatedSplit: DocumentReference; 
@@ -34,7 +34,7 @@ export type PaymentType = {
 
 
 export type SplitType = {
-    id: string,
+    id: DocumentReference,
     name: string,
     creationDate: Date,
     currency: string,

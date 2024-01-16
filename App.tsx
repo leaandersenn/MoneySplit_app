@@ -11,6 +11,7 @@ import HomeScreen from './src/screens/HomeScreen';
 import { UserType } from './src/utils/types';
 import { DocumentSnapshot, collection, doc, getDoc, getDocs } from 'firebase/firestore';
 import { db } from './firebaseConfig';
+import NewPaymentScreen from './src/screens/NewPaymentScreen';
 
 
 
@@ -42,7 +43,8 @@ export default function App() {
         <Stack.Screen name='Home' component={HomeScreen}/>
         <Stack.Screen name='LogIn' component={LogInScreen} />
         <Stack.Screen name='SignUp' component={SignUpScreen} />
-        {/* <Stack.Screen name='Split' component={SplitScreen} /> */}
+        <Stack.Screen name='Split' component={SplitScreen} />
+        <Stack.Screen name='NewPayment' component={NewPaymentScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   );

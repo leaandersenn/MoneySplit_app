@@ -8,7 +8,7 @@ import { useNavigation } from '@react-navigation/native';
 enum cardColors {
     pink='#ff7de1',
     green='#43B05C', 
-    blue='#5BD4FA'
+    blue='#5698fc'
 }
 
 
@@ -47,10 +47,10 @@ const styles = StyleSheet.create({
         maxHeight: 190, 
         width: 310, 
         padding: 12,
-        margin: 10 ,
+        margin: 10,
         shadowColor: "#000",
         shadowOffset: { width: 0, height: 1 },
         shadowOpacity: 0.5,
-        shadowRadius: 3,
+        shadowRadius: 1.5,
     }
   });

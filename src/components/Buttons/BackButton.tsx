@@ -5,14 +5,18 @@ import { useNavigation } from '@react-navigation/native';
 
 //Will navigate back to previous screen
 
-export default function BackButton() {
+type OptionalColorProp ={
+  color?: string
+}
+
+export default function BackButton(color: OptionalColorProp) {
   const navigation = useNavigation();
 
   return (
     <TouchableOpacity
       onPress={() => navigation.goBack()}
     >
-      <Icon name="chevron-left" size={24} color="#000" />
+      <Icon name="chevron-left" size={24} color={color.color ? color.color: "#000"} />
     </TouchableOpacity>
   );
 };

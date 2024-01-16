@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import {View, StyleSheet} from 'react-native'
 
 import { colors } from '../utils/colors'
@@ -15,34 +15,35 @@ type paymentProps = {
     id: string
     payment: PaymentType; 
     partOfPayment: boolean;
-    yourPartIs: string;
     currency: string; //get from Split
+    //creatorData?: UserType
 }
 
 
 //TODO: finn ut hvordan man får userID til innlogget bruker
-//Bruk så dette til å sjekke denne mot props.creator, og userID-ene i props.participants ...
+//Bruk så dette til å sjekke denne mot props.creator, og userID-ene i props.participants ... Legg til "Your part is"
 
 //Lagde brukeren oppgjøret, skal kortet være lysegrått. 
 
 const Payment = (props: paymentProps) => {
     const id = props.id
     
+    
     return (
         ((props.partOfPayment) ?
         
-        (<View style={styles.bluePayment}>
-            <MediumTextWhite>{`${props.payment.sumOfPayment} ${props.currency}`}</MediumTextWhite>
+        (<View id={id} style={styles.bluePayment}>
+            <MediumTextWhite>{`${props.payment.amount} ${props.currency}`}</MediumTextWhite>
             <XSmallTextWhite>{`${props.payment.title}`}</XSmallTextWhite>
-            <XSmallTextWhite>{`${props.payment.creator}`}</XSmallTextWhite>
+            {/* <XSmallTextWhite>{`${props.creatorData?.firstName} ${props.creatorData?.lastName}`}</XSmallTextWhite> */}
 
-            <XSmallTextWhite>{`Your share is ${Object.keys(props.yourPartIs)[0]} ${props.currency}`}</XSmallTextWhite>
+            <XSmallTextWhite>{`Your share is x ${props.currency}`}</XSmallTextWhite>
         </View>) 
         :
-        (<View style={styles.greyPaymentLeft}>
-            <MediumText>{`${props.payment.sumOfPayment} ${props.currency}`}</MediumText>
+        (<View id={id} style={styles.greyPaymentLeft}>
+            <MediumText>{`${props.payment.amount} ${props.currency}`}</MediumText>
             <XSmallText>{`${props.payment.title}`}</XSmallText>
-            <XSmallText>{`${props.payment.creator}`}</XSmallText>
+            {/* <XSmallText>{`${props.creatorData?.firstName} ${props.creatorData?.lastName}`}</XSmallText> */}
 
             <XSmallText>{'Your share is ' }</XSmallText>
         </View>)) 
@@ -63,10 +64,11 @@ const styles = StyleSheet.create({
         maxHeight: 150, 
         width: 300, 
         padding: 12,
+        margin: 8,
         shadowColor: "#000",
         shadowOffset: { width: 0, height: 1 },
         shadowOpacity: 0.5,
-        shadowRadius: 3,
+        shadowRadius: 1.5,
     },
     greyPaymentLeft: {
         flex: 1,
@@ -79,10 +81,11 @@ const styles = StyleSheet.create({
         minHeight: 125, 
         maxHeight: 150,
         width: 300, 
-        padding: 12, 
+        padding: 12,
+        margin: 8,
         shadowColor: "#000",
         shadowOffset: { width: 0, height: 1 },
         shadowOpacity: 0.5,
-        shadowRadius: 3,
+        shadowRadius: 1.5,
     },
   });

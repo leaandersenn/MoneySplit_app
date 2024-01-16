@@ -1,27 +1,31 @@
 import React, { useEffect, useState } from 'react'
 import { Button, SafeAreaView, ScrollView, StyleSheet, View } from 'react-native';
 import { LargeText } from '../components/Text/LargeText';
-import { DocumentSnapshot, collection, doc, getDoc, getDocs } from 'firebase/firestore';
+import { DocumentReference, DocumentSnapshot, collection, doc, getDoc, getDocs } from 'firebase/firestore';
 import { SplitType, UserType } from '../utils/types';
 import SplitCard from '../components/SplitCard';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { db } from '../../firebaseConfig';
 
 
-type RootStackParamList = {
+export type RootStackParamList = {
     Home: {user: UserType};
     Split: {split: SplitType};
     LogIn: undefined;
     SignUp: undefined;
+    NewPayment: {split: SplitType, users: UserType[]};
 }
 
+//type HomeScreenRouteProp = RouteProp<RootStackParamList, 'Home'>
 type HomeScreenNavigationProp = NativeStackNavigationProp<RootStackParamList, 'Home'>
 
-type Props = {
+type HomeScreenProps = {
+  //route: HomeScreenRouteProp
   navigation: HomeScreenNavigationProp
 }
 
-const HomeScreen = ({navigation}: Props) => {
+
+const HomeScreen = ({navigation}: HomeScreenProps) => {
     const [user, setUser] = useState<UserType>()
     const [data, setData] = useState<SplitType[]>([])
 
@@ -62,18 +66,18 @@ const HomeScreen = ({navigation}: Props) => {
                 for (const docRef of user.splits) {
                     const docSnapshot = await getDoc(docRef)
                     if (docSnapshot.exists()) {
-                      console.log("docSnapshot" + docSnapshot.data())
-                        items.push({ ...docSnapshot.data(), id: docSnapshot.id } as SplitType)
+                        items.push({ ...docSnapshot.data(), id: docSnapshot.ref } as SplitType)
                     }
                 }
-                console.log("kommer hit")
-                setData(items as SplitType[])
                 console.log(items)
+                console.log("kommer hit")
+                setData(items)
+                console.log(data)
             } catch (error) {
                 console.error("Error fetching data: ", error)
             }
         };
-    
+        
         fetchData()
     }, [user])
 
@@ -93,16 +97,16 @@ const HomeScreen = ({navigation}: Props) => {
       </View>
       
       <>
-      <View style={styles.cards}>
+      <ScrollView contentContainerStyle={styles.cards}>
         {data.map((e) => {
             return(
                 <SplitCard 
-                    id={e.id}
+                    id={`${e.id}`}
                     split={e}
-                    onClick={() => navigation.navigate('Split', { split: e })}
+                    onClick={() => navigation.navigate('Split', {split: e })}
                 />)
             })}
-      </View>
+      </ScrollView>
       </>
     </View>
   )

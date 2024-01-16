@@ -7,13 +7,13 @@ import { MediumText } from '../components/Text/MediumText';
 import { GreenLargeButton } from '../components/Buttons/GreenLargeButton';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { XSmallText } from '../components/Text/XSmallText';
-import { SignInButton } from '../components/Buttons/SignInButton';
 
 import { ForgotPasswordButton } from '../components/Buttons/ForgotPasswordButton';
 import DividerWithText from '../components/Divider';
 import Spacer from '../components/Spacer';
 import TextInputField from '../components/InputFields/TextInputField';
 import PasswordInput from '../components/InputFields/PasswordInput';
+import { SignInButton } from '../components/Buttons/SignInButton';
 
 type RootStackParamList = {
     LogIn: undefined;

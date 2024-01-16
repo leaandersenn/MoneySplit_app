@@ -1,33 +1,34 @@
 import React, { useEffect, useState } from 'react'
-import { PaymentType, SplitType, UserType } from '../utils/types';
-import { getDoc } from 'firebase/firestore';
-import { StyleSheet, View, ScrollView } from 'react-native';
+import { PaymentType, UserType } from '../utils/types';
+import { DocumentReference, getDoc } from 'firebase/firestore';
+import { StyleSheet, View, ScrollView, SafeAreaView } from 'react-native';
 import Payment from '../components/Payment';
 import { RouteProp } from '@react-navigation/native';
-import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import BackButton from '../components/Buttons/BackButton';
+import { RootStackParamList } from './HomeScreen';
+import { colors } from '../utils/colors';
+import Spacer from '../components/Spacer';
+import { MediumText } from '../components/Text/MediumText';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { BlueLargeButton } from '../components/Buttons/BlueLargeButton';
 
 
-type RootStackParamList = {
-    Home: {user: UserType};
-    Split: {split: SplitType};
-}
+
 
 type SplitScreenRouteProp = RouteProp<RootStackParamList, 'Split'>
 type SplitScreenNavigationProp = NativeStackNavigationProp<RootStackParamList, 'Split'>
 
 type SplitScreenProps = {
-    route: SplitScreenRouteProp
-    navigation: SplitScreenNavigationProp
+  route: SplitScreenRouteProp
+  navigation: SplitScreenNavigationProp
 }
 
 
+const SplitScreen = ({route, navigation}: SplitScreenProps) => {
+    const [payments, setPayments] = useState<PaymentType[]>([]);
+    const [users, setUsers] = useState<UserType[]>([]);
 
-const SplitScreen = ({route}: SplitScreenProps) => {
-    const [data, setData] = useState<PaymentType[]>([]);
-    const split = route.params.split;
-
-    console.log(split)
+    const { split } = route.params
 
     useEffect(() => {
         const fetchData = async () => {
@@ -39,7 +40,7 @@ const SplitScreen = ({route}: SplitScreenProps) => {
                         items.push({ ...docSnapshot.data(), id: docSnapshot.id } as PaymentType);
                     }
                 }
-                setData(items as PaymentType[]);
+                setPayments(items);
                 console.log(items);
             } catch (error) {
                 console.error("Error fetching data: ", error);
@@ -50,35 +51,81 @@ const SplitScreen = ({route}: SplitScreenProps) => {
     }, []); 
 
 
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const items = [];
+                for (const docRef of split.users) {
+                    const docSnapshot = await getDoc(docRef);
+                    if (docSnapshot.exists()) {
+                        items.push({ ...docSnapshot.data(), id: docSnapshot.ref } as UserType);
+                    }
+                }
+                setUsers(items);    
+                console.log(items);
+            } catch (error) {
+                console.error("Error fetching data: ", error);
+            }
+        };
+    
+        fetchData();
+    }, []); 
+
+
+    const findUserByCreatorRef = (creatorRef: DocumentReference): UserType | undefined => {
+        return users.find(user => user.id === creatorRef);
+    };
+
+
   return (
-    <View style={styles.container}>
-        <ScrollView>
-            <View>
-                <BackButton />
-            </View>
-        {data.map((e) => {
-            return(
-            <Payment 
-            id={e.id}
-            partOfPayment={false} 
-            yourPartIs={e.participants.keys().next().value} 
-            currency={split.currency}
-            payment={e} 
-            />)
-            })}
+    <SafeAreaView style={styles.white}>
+        <View style={styles.title}>
+            <BackButton color={colors.tertiary}/>
+            <Spacer horizontal={true} size={110}></Spacer>
+            <MediumText>{split.name}</MediumText>
+        </View>
+        <ScrollView contentContainerStyle={styles.scrollView}>
+            {payments.map((payment) => {
+                const creatorData = findUserByCreatorRef(payment.creator)
+                console.log(creatorData)
+
+                return(
+                    <Payment 
+                        id={payment.id}
+                        partOfPayment={false} 
+                        currency={split.currency}
+                        payment={payment} 
+                        //creatorData={creatorData}
+                    />
+                )})
+            }
         </ScrollView>
-    </View>
+        <View>
+            <BlueLargeButton title={"Add payment"} onClick={() => navigation.navigate('NewPayment', {split: split, users: users})}/>
+        </View>
+    </SafeAreaView>
   )
 }
 
 
 const styles = StyleSheet.create({
-    container: {
-      flex: 1,
-      backgroundColor: '#ffff',
-      alignItems: 'center',
-      justifyContent: 'center',
+    white: {
+        flex: 1,
+        backgroundColor: '#ffff',
     },
+    scrollView: {
+        flexGrow: 2,
+        alignItems: 'center',
+        paddingTop: 10, 
+    },
+    title:{
+        marginTop: 15, 
+        marginLeft: 20,
+        marginBottom: 15,
+        flexDirection: 'row',
+        justifyContent: 'flex-start',
+        alignContent: 'flex-start'
+      }
   });
 
 
