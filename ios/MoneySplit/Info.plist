@@ -27,7 +27,15 @@
       <dict>
         <key>CFBundleURLSchemes</key>
         <array>
+          <string>moneysplit</string>
+          <string>ms1414315359174188</string>
           <string>com.bendingspoons.amk.moneysplit</string>
+        </array>
+      </dict>
+      <dict>
+        <key>CFBundleURLSchemes</key>
+        <array>
+          <string>exp+moneysplit</string>
         </array>
       </dict>
     </array>
