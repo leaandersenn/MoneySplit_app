@@ -19,10 +19,23 @@ const StyledTextWhite = styled(Text)`
   font-family: Quicksand;
 `;
 
+const StyledTextBold = styled(Text)`
+  font-size: 32px;
+  font-weight: bold;
+  color: ${colors.graydark};
+  text-align: left; 
+  font-family: WorkSans;
+`;
 
 export const MediumText = (props: TextProps) => {
   return (
     <StyledText>{props.children}</StyledText>
+  )
+}
+
+export const MediumTextBold = (props: TextProps) => {
+  return (
+    <StyledTextBold>{props.children}</StyledTextBold>
   )
 }
 
@@ -31,3 +44,5 @@ export const MediumTextWhite = (props: TextProps) => {
     <StyledTextWhite>{props.children}</StyledTextWhite>
   )
 }
+
+
