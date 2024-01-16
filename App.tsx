@@ -7,10 +7,6 @@ import { createNativeStackNavigator, NativeStackNavigationProp } from '@react-na
 import LogInScreen from './src/screens/LogInScreen';
 import SignUpScreen from './src/screens/SignUpScreen';
 import AfterLoginScreen from './src/screens/AfterLoginScreen';
-import { LogBox } from 'react-native';
-LogBox.ignoreLogs(['new NativeEventEmitter']); // Ignore log notification by message
-LogBox.ignoreAllLogs()
-
 import { SmallText } from "./src/components/Text/SmallText";
 import { MediumText } from './src/components/Text/MediumText';
 import { LargeText } from './src/components/Text/LargeText';
