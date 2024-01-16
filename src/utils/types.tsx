@@ -23,8 +23,11 @@ export type PaymentType = {
     relatedSplitsId: string[];
 }
 
-export type User = {
-    id: string;
-    firstName: string
-    lastName: string
+export type UserType = {
+    id: string,
+    firstName: string,
+    lastName: string,
+    email: string,
+    splits: string[],
+    payments: string[]
 }
