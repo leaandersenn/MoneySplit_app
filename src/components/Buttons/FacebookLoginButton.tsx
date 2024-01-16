@@ -6,9 +6,7 @@ export const FaceBookLogin = (props: StyledButtonProps) => {
     return (
         <TouchableOpacity onPress={props.onClick} style={styles.button}>
             <Image source={require('../../../assets/Facebook_circle_pictogram.svg.png')} style={styles.icon} />
-            <View>
-                <Text style={styles.text}>{props.title}</Text>
-            </View>
+            <Text style={styles.text}>{props.title}</Text>
         </TouchableOpacity> 
     )
 
@@ -16,17 +14,20 @@ export const FaceBookLogin = (props: StyledButtonProps) => {
 
 const styles = StyleSheet.create({
     button: {
-        backgroundColor: '#ffffff',
+        display: 'flex',
+        flexDirection: 'row',
+        backgroundColor: '#fff',
         width: 324, 
         height: 48,
         justifyContent: 'center',
         alignItems: 'center',
         borderRadius: 20,
+        borderWidth: 1,
         borderColor: '#000000'
     },
     text: {
         color: '#000000',
-        fontSize: 16,
+        fontSize: 14,
     },
     icon: {
         marginRight: 8,
