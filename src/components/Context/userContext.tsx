@@ -9,7 +9,7 @@ import {
   signOut,
   FacebookAuthProvider
 } from "firebase/auth";
-import { doc, setDoc } from "firebase/firestore";
+import { addDoc, collection, doc, setDoc } from "firebase/firestore";
 import { FirebaseUser, UserContextType } from "../types";
 import * as FaceBook from 'expo-auth-session/providers/facebook';
 import * as WebBrowser from 'expo-web-browser';
@@ -89,11 +89,7 @@ export const UserContextProvider = ({ children }: any) => {
         password
       );
       const authUser = userCredentials.user;
-      await setDoc(doc(db, "Users", authUser.uid), {
-        email,
-        firstName,
-        lastName
-      });
+      console.log(authUser);
     } catch (error: any) {
       setError(error.message);
     } finally {
@@ -133,11 +129,9 @@ export const UserContextProvider = ({ children }: any) => {
       setError(error.message);
     }
   };
-
-  // If still initializing, don't render anything (or place a loading indicator)
+  
   if (initializing) return null;
 
-  // Provide the context value that will be supplied to any components that consume this context
   const contextValue = {
     user,
     loading,
