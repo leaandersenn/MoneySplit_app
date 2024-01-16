@@ -103,7 +103,7 @@ export default function LogInScreen({ navigation }: Props) {
             <GreenLargeButton title='Sign In' onClick={signIn} />
             <DividerWithText title={"Or login with"}/>
             
-            <View style={styles.container}>
+            <View>
                 {user ? (
                     <Profile user={user}></Profile>
                 ) : (
