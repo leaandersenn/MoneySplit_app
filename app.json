@@ -16,8 +16,7 @@
     ],
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.bendingspoons.amk.moneysplit",
-      "googleServicesFile": "./ios/GoogleService-Info.plist"
+      "bundleIdentifier": "com.bendingspoons.amk.moneysplit"
     },
     "android": {
       "adaptiveIcon": {
@@ -29,6 +28,14 @@
     },
     "web": {
       "favicon": "./assets/favicon.png"
+    },
+    "scheme": ["moneysplit", "ms1414315359174188"],
+    "extra": {
+      "eas": {
+        "projectId": "e9a0be28-1288-40b8-b772-ea29dfb458dd"
+      }
     }
   }
 }
+
+/* https://com.bendingspoons.amk.moneysplit/expo-development-client/?url=http%3A%2F%2F10.24.2.170%3A8081 */

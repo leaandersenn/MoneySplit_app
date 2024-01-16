@@ -6,7 +6,7 @@ import { StyledButtonProps } from '../types';
 
 export const GreenLargeButton = (props: StyledButtonProps) => {
     return (
-        <TouchableOpacity onPress={props.onClick} style={styles.button}>
+        <TouchableOpacity onPress={props.onPress} style={styles.button}>
             <Text style={styles.text}>{props.title}</Text>
         </TouchableOpacity>
     )
