@@ -27,7 +27,7 @@ export default function CreateNewSplitScreen() {
     setSelectedColor(color);
   };
 
-  const currencyOptions = [
+  const currencyOptions = [ //TODO: communication w/ Exchange API
     { label: 'NOK', value: 'NOK' },
     { label: 'USD', value: 'USD' },
     { label: 'EUR', value: 'EUR' },
@@ -69,19 +69,18 @@ export default function CreateNewSplitScreen() {
     try {
       const splitData = {
         name: splitName,
+        creationDate: new Date(),
         currency: selectedCurrency,
-        users: selectedUsers.map(user => user.id),
         cardColor: selectedColor,
-        dateCreated: new Date(),
+        users: selectedUsers.map(user => user.id),
       };
       const docRef = await addDoc(collection(db, 'Splits'), splitData);
-      const splitId = docRef.id;
 
       // Update each selected user's document in the Users collection
       for (const user of selectedUsers) {
         const userDocRef = doc(db, 'Users', user.id);
         await updateDoc(userDocRef, {
-          splits: arrayUnion(splitId)
+          splits: arrayUnion(docRef)
         });
       }
     } catch (error) {

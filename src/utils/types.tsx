@@ -1,3 +1,4 @@
+import { DocumentReference } from "firebase/firestore";
 import { ReactNode } from "react";
 import { StyleProp, TextStyle } from "react-native";
 
@@ -17,10 +18,9 @@ export type PaymentType = {
     id: string,
     creator: number;
     sumOfPayment: number;
-    currency: string;
     title: string;
-    participants: Map<string, string>;
-    relatedSplitsId: string[];
+    participants: Map<string, number>;
+    relatedSplit: DocumentReference; 
 }
 
 export type UserType = {
@@ -28,6 +28,6 @@ export type UserType = {
     firstName: string,
     lastName: string,
     email: string,
-    splits: string[],
-    payments: string[]
+    splits: DocumentReference[],
+    payments: DocumentReference[]
 }
