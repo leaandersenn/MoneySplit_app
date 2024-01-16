@@ -1,52 +1,69 @@
 import React, { useEffect, useState } from 'react'
-import { PaymentType } from '../utils/types';
-import { DocumentSnapshot, collection, getDocs } from 'firebase/firestore';
-import { db } from '../../firebaseConfig';
+import { PaymentType, SplitType, UserType } from '../utils/types';
+import { getDoc } from 'firebase/firestore';
 import { StyleSheet, View, ScrollView } from 'react-native';
 import Payment from '../components/Payment';
+import { RouteProp } from '@react-navigation/native';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import BackButton from '../components/Buttons/BackButton';
+
+
+type RootStackParamList = {
+    Home: {user: UserType};
+    Split: {split: SplitType};
+}
+
+type SplitScreenRouteProp = RouteProp<RootStackParamList, 'Split'>
+type SplitScreenNavigationProp = NativeStackNavigationProp<RootStackParamList, 'Split'>
+
+type SplitScreenProps = {
+    route: SplitScreenRouteProp
+    navigation: SplitScreenNavigationProp
+}
 
 
 
-const SplitScreen = () => {
+const SplitScreen = ({route}: SplitScreenProps) => {
     const [data, setData] = useState<PaymentType[]>([]);
+    const split = route.params.split;
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const payments = collection(db, 'Payments');
-        const response = await getDocs(payments);
-        console.log(response)
-        const items = response.docs.map((doc: DocumentSnapshot) => ({...doc.data(), id: doc.id} as PaymentType));
-        setData(items)
-        console.log(items)
+    console.log(split)
 
-      } catch (error) {
-        console.error("Error fetching data: ", error);
-      }
-    };
-
-    fetchData();
-  }, []); 
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const items = [];
+                for (const docRef of split.paymentsID) {
+                    const docSnapshot = await getDoc(docRef);
+                    if (docSnapshot.exists()) {
+                        items.push({ ...docSnapshot.data(), id: docSnapshot.id } as PaymentType);
+                    }
+                }
+                setData(items as PaymentType[]);
+                console.log(items);
+            } catch (error) {
+                console.error("Error fetching data: ", error);
+            }
+        };
+    
+        fetchData();
+    }, []); 
 
 
   return (
-    <View>
+    <View style={styles.container}>
         <ScrollView>
-        {Object.entries(data).map((e) => {
+            <View>
+                <BackButton />
+            </View>
+        {data.map((e) => {
             return(
             <Payment 
-            id={Object(e[0])}
+            id={e.id}
             partOfPayment={false} 
-            yourPartIs={Object.keys(e[1].participants)[0]} 
-            payment={{
-                id: Object(e[0]),
-                creator: Object(e[1].creator),
-                sumOfPayment: Object(e[1].sumOfPayment),
-                currency: Object(e[1].currency),
-                title: Object(e[1].title),
-                participants: Object(e[1].participants),
-                relatedSplitsId: Object(e[1].relatedSplitsId)
-            }} 
+            yourPartIs={e.participants.keys().next().value} 
+            currency={split.currency}
+            payment={e} 
             />)
             })}
         </ScrollView>
