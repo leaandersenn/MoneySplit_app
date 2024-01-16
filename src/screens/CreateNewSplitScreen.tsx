@@ -76,8 +76,10 @@ export default function CreateNewSplitScreen() {
         // Include any other fields you need for the Split
       };
       const docRef = await addDoc(collection(db, 'Splits'), splitData);
+      alert('Split created successfully');
     } catch (error) {
       console.error('Error creating split:', error);
+      alert('Error creating split');
     }
   };
 

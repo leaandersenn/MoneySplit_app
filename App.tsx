@@ -12,7 +12,7 @@ import { MediumText } from './src/components/Text/MediumText';
 import { LargeText } from './src/components/Text/LargeText';
 import { XSmallText } from './src/components/Text/XSmallText';
 
-import CreateNewSplitScreen from './src/screens/CreateNewSplitScreen';
+import NewPaymentScreen from './src/screens/NewPaymentScreen';
 
 type RootStackParamList = {
   Home: undefined;
@@ -35,8 +35,10 @@ function HomeScreen({ navigation }: Props) {
       <LargeText>{"Money Split"}</LargeText>
       <MediumText>{"Money Split"}</MediumText>
       <SmallText>{"Money Split"}</SmallText>
-      <XSmallText>{"Nå skriver jeg inn en hel masse her bare for å se hvordan det vil bli seende ut på skjermen. Kanskje blir det stygt. Kanskje blir det fint."}</XSmallText>
+      <XSmallText>{"Money Split"}</XSmallText>
       
+      <NewPaymentScreen/>
+
       <Button
         title="Gå til Logg In"
         onPress={() => navigation.navigate('LogIn')}
