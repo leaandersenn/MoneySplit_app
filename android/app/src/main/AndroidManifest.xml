@@ -26,6 +26,9 @@
         <category android:name="android.intent.category.DEFAULT"/>
         <category android:name="android.intent.category.BROWSABLE"/>
         <data android:scheme="com.bendingspoons.amk.moneysplit"/>
+        <data android:scheme="exp+moneysplit"/>
+        <data android:scheme="moneysplit"/>
+        <data android:scheme="ms1414315359174188"/>
       </intent-filter>
     </activity>
     <activity android:name="com.facebook.react.devsupport.DevSettingsActivity" android:exported="false"/>
