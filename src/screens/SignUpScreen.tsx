@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { LargeText } from '../components/Text/LargeText';
 import { createUserWithEmailAndPassword } from "firebase/auth";
@@ -10,7 +10,7 @@ import Spacer from '../components/Styling/Spacer';
 import DividerWithText from '../components/Styling/Divider';
 import PasswordInput from '../components/InputFields/PasswordInput';
 import TextInputField from '../components/InputFields/TextInputField';
-
+import FaceBookLogin from '../components/Buttons/FacebookLoginButton';
 
 export default function LogInScreen() {
     
@@ -18,13 +18,10 @@ export default function LogInScreen() {
     const [lastName, setLastName] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-    const [checkPassword, setCheckPassword] = useState('');
-
-  
+    
     const auth = FIREBASE_AUTH;
 
     const signUp = async () => {
-        if (password === checkPassword) {
             try {
                 const response = await createUserWithEmailAndPassword(auth, email, password);
                 console.log(response);
@@ -32,10 +29,8 @@ export default function LogInScreen() {
                 console.log(error);
                 alert('Sign up failed');
             } 
-        } else {
-            alert('Passwords do not match')
         }
-    }
+    
 
     return (
         <View style={styles.container}>
@@ -48,19 +43,16 @@ export default function LogInScreen() {
                 </View>
             </View>
             <TextInputField value={name} placeholder='First name' onChangeText={setName}/>
-            <TextInputField value={name} placeholder='Last name' onChangeText={setLastName}/>
-            <TextInputField value={name} placeholder='Email' onChangeText={setEmail}/>
+            <TextInputField value={lastName} placeholder='Last name' onChangeText={setLastName}/>
+            <TextInputField value={email} placeholder='Email' onChangeText={setEmail}/>
             
             <PasswordInput value={password} placeholder='Password' onChangeText={setPassword} />
-            <Spacer size={21} horizontal={false}/>
-            <PasswordInput value={checkPassword} placeholder='Confirm Password' onChangeText={setCheckPassword} />
             <Spacer size={21} horizontal={false}/>
             
             <GreenLargeButton title='Sign Up' onClick={signUp}></GreenLargeButton>
             <DividerWithText title={'Or sign up with'}/>
 
-            {/* TODO: Switch with Google */}
-            <GreenLargeButton title='Google' onClick={signUp}></GreenLargeButton>
+            <FaceBookLogin/>
         </View>
     )
 };
