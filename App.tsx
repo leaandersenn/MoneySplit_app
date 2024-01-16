@@ -35,8 +35,10 @@ function HomeScreen({ navigation }: Props) {
       <LargeText>{"Money Split"}</LargeText>
       <MediumText>{"Money Split"}</MediumText>
       <SmallText>{"Money Split"}</SmallText>
-      <XSmallText>{"Nå skriver jeg inn en hel masse her bare for å se hvordan det vil bli seende ut på skjermen. Kanskje blir det stygt. Kanskje blir det fint."}</XSmallText>
+      <XSmallText>{"Money Split"}</XSmallText>
       
+      <CreateNewSplitScreen/>
+
       <Button
         title="Gå til Logg In"
         onPress={() => navigation.navigate('LogIn')}

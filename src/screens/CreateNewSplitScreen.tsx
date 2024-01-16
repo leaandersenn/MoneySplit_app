@@ -3,10 +3,10 @@ import { Text, View, TextInput, Button, StyleSheet, FlatList, TouchableOpacity }
 import { CheckBox } from 'react-native-elements'
 import RNPickerSelect from 'react-native-picker-select'
 
-import { DocumentSnapshot, collection, getDocs, addDoc } from 'firebase/firestore'
+import { DocumentSnapshot, collection, getDocs, addDoc, updateDoc, arrayUnion, doc } from 'firebase/firestore'
 import { db } from '../../firebaseConfig'
 
-import { User } from '../utils/types'
+import { UserType } from '../utils/types'
 
 import { XSmallText } from '../components/Text/XSmallText'
 import TextInputField from '../components/InputFields/TextInputField'
@@ -17,9 +17,9 @@ export default function CreateNewSplitScreen() {
   const [selectedCurrency, setSelectedCurrency] = useState<string | null>(null)
   const [searchQuery, setSearchQuery] = useState<string>('')
   
-  const [users, setUsers] = useState<User[]>([])
-  const [selectedUsers, setSelectedUsers] = useState<User[]>([])
-  const [filteredUsers, setFilteredUsers] = useState<User[]>([])
+  const [users, setUsers] = useState<UserType[]>([])
+  const [selectedUsers, setSelectedUsers] = useState<UserType[]>([])
+  const [filteredUsers, setFilteredUsers] = useState<UserType[]>([])
 
   const [selectedColor, setSelectedColor] = useState<string | null>(null);
 
@@ -37,14 +37,14 @@ export default function CreateNewSplitScreen() {
   useEffect(() => {
     const fetchUsers = async () => {
       const response = await getDocs(collection(db, 'Users'));
-      const items = response.docs.map((doc: DocumentSnapshot) => ({...doc.data(), id: doc.id} as User));
+      const items = response.docs.map((doc: DocumentSnapshot) => ({...doc.data(), id: doc.id} as UserType));
       setUsers(items);
     };
 
     fetchUsers()
   }, [])
 
-  const handleSelectUser = (user: User) => {
+  const handleSelectUser = (user: UserType) => {
     if (selectedUsers.some(selectedUser => selectedUser.id === user.id)) {
       setSelectedUsers(selectedUsers.filter(u => u.id !== user.id));
     } else {
@@ -61,7 +61,7 @@ export default function CreateNewSplitScreen() {
     setFilteredUsers(filtered);
     }, [searchQuery, users]);
 
-  const isUserSelected = (user: User) => {
+  const isUserSelected = (user: UserType) => {
     return selectedUsers.some(selectedUser => selectedUser === user)
   }
 
@@ -73,9 +73,17 @@ export default function CreateNewSplitScreen() {
         users: selectedUsers.map(user => user.id),
         cardColor: selectedColor,
         dateCreated: new Date(),
-        // Include any other fields you need for the Split
       };
       const docRef = await addDoc(collection(db, 'Splits'), splitData);
+      const splitId = docRef.id;
+
+      // Update each selected user's document in the Users collection
+      for (const user of selectedUsers) {
+        const userDocRef = doc(db, 'Users', user.id);
+        await updateDoc(userDocRef, {
+          splits: arrayUnion(splitId)
+        });
+      }
     } catch (error) {
       console.error('Error creating split:', error);
     }
