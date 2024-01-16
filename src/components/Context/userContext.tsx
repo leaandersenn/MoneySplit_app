@@ -25,7 +25,7 @@ export const UserContext = createContext<UserContextType>({
   registerUser: async () => {},
   logoutUser: async () => {},
   forgotPassword: async () => {},
-/*   signInWithFacebook: async () => {} */
+  signInWithFacebook: async () => {} 
 });
 
 export const useUserContext = () => useContext(UserContext);
@@ -38,6 +38,7 @@ export const UserContextProvider = ({ children }: any) => {
   const [request, response, promptAsync] = FaceBook.useAuthRequest({
     clientId: "1414315359174188",
   });
+  
   WebBrowser.maybeCompleteAuthSession();
   
   // Listen to the Firebase Auth state and set the user
@@ -49,7 +50,7 @@ export const UserContextProvider = ({ children }: any) => {
     return unsubscribe;
   }, [initializing]);
   
- /*  //Handle SignIn/LogIn with Facebook
+  //Handle SignIn/LogIn with Facebook
   const signInWithFacebook = async () => {
     setLoading(true);
     try {
@@ -67,7 +68,6 @@ export const UserContextProvider = ({ children }: any) => {
       const facebookCredential = FacebookAuthProvider.credential(data.accessToken);
       console.log("halla" + facebookCredential.accessToken);
       const response = await signInWithCredential(FIREBASE_AUTH, facebookCredential);
-    
       console.log(response);
      
       return response;
@@ -76,7 +76,7 @@ export const UserContextProvider = ({ children }: any) => {
     } finally {
       setLoading(false);
     }
-  } */
+  }
 
   // Function to register a new user
   const registerUser = async ({ email, password, firstName, lastName }: any) => {
@@ -140,7 +140,7 @@ export const UserContextProvider = ({ children }: any) => {
     registerUser,
     logoutUser,
     forgotPassword,
-/*     signInWithFacebook */
+    signInWithFacebook 
   };
 
   return (

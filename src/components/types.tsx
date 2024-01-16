@@ -18,7 +18,7 @@ export type UserContextType = {
     registerUser: (user: any) => Promise<void>;
     logoutUser: () => Promise<void>;
     forgotPassword: (email: string) => Promise<void>;
- /*    signInWithFacebook: () => Promise<any | null>; */
+    signInWithFacebook: () => Promise<any | null | void >;
   };
 
 export type FirebaseUser = {

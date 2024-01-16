@@ -5,7 +5,7 @@ import { StyledButtonProps } from '../types';
 
 export const SignInButton = (props: StyledButtonProps) => {
     return (
-        <TouchableOpacity onPress={props.onClick}>
+        <TouchableOpacity onPress={props.onPress}>
             <Text style={styles.text}>{props.title}</Text>
         </TouchableOpacity>
     )

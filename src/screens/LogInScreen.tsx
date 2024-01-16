@@ -12,8 +12,15 @@ import DividerWithText from '../components/Styling/Divider';
 import Spacer from '../components/Styling/Spacer';
 import TextInputField from '../components/InputFields/TextInputField';
 import PasswordInput from '../components/InputFields/PasswordInput';
-/* import FaceBookLogin from '../components/Buttons/FacebookLoginButton'; */
+import FaceBookLogin from '../components/Buttons/FacebookLoginButton';
 import { useUserContext } from '../components/Context/userContext';
+import { AccessToken, LoginManager } from 'react-native-fbsdk-next';
+import { FacebookAuthProvider, signInWithCredential } from 'firebase/auth';
+import * as FaceBook from 'expo-auth-session/providers/facebook';
+import * as WebBrowser from 'expo-web-browser';
+
+
+WebBrowser.maybeCompleteAuthSession();
 
 type RootStackParamList = {
     LogIn: undefined;
@@ -32,7 +39,8 @@ export default function LogInScreen({ navigation }: Props) {
 
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-    const { signInUser, forgotPassword, logoutUser } = useUserContext();
+    const { signInUser, forgotPassword, logoutUser, signInWithFacebook } = useUserContext();
+
 
     const onSubmit = async () => {
         try {
@@ -40,6 +48,7 @@ export default function LogInScreen({ navigation }: Props) {
             console.log("Email" + email + "prøver å logge inn")
             await signInUser({email, password});
             console.log("her er brukeren" + FIREBASE_AUTH.currentUser?.email)
+            navigation.navigate('AfterLogin');
             } 
         } catch (error) {
             console.log(error);
@@ -57,7 +66,14 @@ export default function LogInScreen({ navigation }: Props) {
     const handleSignout = async () => {
         logoutUser();
         console.log("User signed out");
-        console.log(FIREBASE_AUTH.currentUser + ": current user");
+        console.log(FIREBASE_AUTH.currentUser + ": current user (should be null)");
+        navigation.goBack();
+    }
+
+    const handleFacebook = async () => {
+        await signInWithFacebook();
+        console.log("Signed in with facebook");
+        navigation.navigate('AfterLogin');
     }
 
     return (
@@ -78,16 +94,15 @@ export default function LogInScreen({ navigation }: Props) {
             </View>
             
             <GreenLargeButton title='Sign In' onPress={onSubmit} />
+
             <Button title='sign out' onPress={handleSignout} />
             <DividerWithText title={"Or login with"}/>
-            
-            
-     {/*        <FaceBookLogin /> */}            
+            <Button title='Facebook try' onPress={handleFacebook} />
+            <FaceBookLogin />           
 
             <View style={styles.registeredText}>
                 <XSmallText children={"Don´t have an account? "} />
                 <SignInButton title={"Sign Up"} onPress={() => navigation.navigate('SignUp')} />
-
             </View>
         </View>
     )

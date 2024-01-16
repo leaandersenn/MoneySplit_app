@@ -41,7 +41,7 @@ export default function FaceBookLogin() {
     
     }
  */
-    useEffect(() => {
+    /* useEffect(() => {
         (async()  => {
             // Attempt login with permissions
             const result = await LoginManager.logInWithPermissions(['public_profile', 'email']);
@@ -64,7 +64,7 @@ export default function FaceBookLogin() {
             return signInWithCredential(FIREBASE_AUTH, facebookCredential);   
         }
         )
-    })
+    }) */
 
     return (
         <TouchableOpacity style={styles.button}>
