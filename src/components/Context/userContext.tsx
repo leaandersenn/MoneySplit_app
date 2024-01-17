@@ -7,11 +7,9 @@ import {
   signInWithEmailAndPassword,
   signOut,
 } from "firebase/auth";
-import { addDoc, collection, doc, setDoc } from "firebase/firestore";
+import { doc, setDoc } from "firebase/firestore";
 import { FirebaseUser, UserContextType } from "../types";
-// import * as FaceBook from 'expo-auth-session/providers/facebook';
 import * as WebBrowser from 'expo-web-browser';
-// import { AccessToken, LoginManager } from 'react-native-fbsdk-next'
 
 WebBrowser.maybeCompleteAuthSession();
 
