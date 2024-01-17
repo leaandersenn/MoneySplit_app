@@ -1,42 +1,70 @@
 import React, { useState } from 'react';
-import { StyleSheet, View } from 'react-native';
+import { Button, StyleSheet, View } from 'react-native';
 import { LargeText } from '../components/Text/LargeText';
 import { createUserWithEmailAndPassword } from "firebase/auth";
-import { FIREBASE_AUTH } from '../../firebaseConfig';
+import { FIREBASE_AUTH, db } from '../../firebaseConfig';
 import { MediumText } from '../components/Text/MediumText';
-
 import { GreenLargeButton } from '../components/Buttons/GreenLargeButton';
 import BackButton from '../components/Buttons/BackButton';
 import Spacer from '../components/Spacer';
 import DividerWithText from '../components/Divider';
 import PasswordInput from '../components/InputFields/PasswordInput';
 import TextInputField from '../components/InputFields/TextInputField';
+import { useUserContext } from '../components/Context/userContext';
+import { addDoc, collection } from 'firebase/firestore';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+
+type RootStackParamList = {
+    Home: undefined;
+    LogIn: undefined;
+    SignUp: undefined;
+    AfterLogin: undefined;
+    HomeScreen: undefined;
+  };
+  
+  type HomeScreenNavigationProp = NativeStackNavigationProp<RootStackParamList, 'Home'>;
+  
+  type Props = {
+    navigation: HomeScreenNavigationProp;
+  };
+  
 
 
-export default function LogInScreen() {
+export default function LogInScreen( {navigation}: Props) {
     
     const [name, setName] = useState('');
     const [lastName, setLastName] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-    const [checkPassword, setCheckPassword] = useState('');
+    const { registerUser, logoutUser } = useUserContext();
 
-  
-    const auth = FIREBASE_AUTH;
-
-    const signUp = async () => {
-        if (password === checkPassword) {
-            try {
-                const response = await createUserWithEmailAndPassword(auth, email, password);
-                console.log(response);
-            } catch (error) {
-                console.log(error);
-                alert('Sign up failed');
+    const onSubmit = async () => {
+        try {
+            if (email && password && name && lastName) {
+            await registerUser({email, password, name, lastName});
+            console.log("Bruker email " + FIREBASE_AUTH.currentUser?.email)
+            const userData = {
+                firstName: name,
+                lastName: lastName,
+                email: email
+              }
+              await addDoc(collection(db, 'Users'), userData);
             } 
-        } else {
-            alert('Passwords do not match')
+            console.log("User added to Firestore");
+            navigation.navigate('AfterLogin');
+        } catch (error) {
+            console.log(error);
+            alert('Sign up failed');
         }
     }
+
+
+    const handleSignout = async () => {
+        await logoutUser();
+        console.log("User signed out");
+        console.log(FIREBASE_AUTH.currentUser + ": current user");
+    }
+    
 
     return (
         <View style={styles.container}>
@@ -54,14 +82,10 @@ export default function LogInScreen() {
             
             <PasswordInput value={password} placeholder='Password' onChangeText={setPassword} />
             <Spacer size={21} horizontal={false}/>
-            <PasswordInput value={checkPassword} placeholder='Confirm Password' onChangeText={setCheckPassword} />
-            <Spacer size={21} horizontal={false}/>
             
-            <GreenLargeButton title='Sign Up' onClick={signUp}></GreenLargeButton>
-            <DividerWithText title={'Or sign up with'}/>
+            <GreenLargeButton title='Sign Up' onClick={onSubmit}></GreenLargeButton>
+            <Button title='sign out' onPress={handleSignout} />
 
-            {/* TODO: Switch with Google */}
-            <GreenLargeButton title='Google' onClick={signUp}></GreenLargeButton>
         </View>
     )
 };

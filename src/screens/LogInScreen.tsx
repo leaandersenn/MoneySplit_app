@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Button, StyleSheet, View} from 'react-native';
+import { Button, StyleSheet, View, Text, useColorScheme} from 'react-native';
 import { LargeText } from '../components/Text/LargeText';
 import { FIREBASE_AUTH } from '../../firebaseConfig';
 import { MediumText } from '../components/Text/MediumText';
@@ -12,8 +12,8 @@ import DividerWithText from '../components/Divider';
 import Spacer from '../components/Spacer';
 import TextInputField from '../components/InputFields/TextInputField';
 import PasswordInput from '../components/InputFields/PasswordInput';
-/* import FaceBookLogin from '../components/Buttons/FacebookLoginButton'; */
 import { useUserContext } from '../components/Context/userContext';
+import GitHubLoginButton from '../components/Buttons/GitHubLoginButton';
 
 type RootStackParamList = {
     LogIn: undefined;
@@ -28,24 +28,22 @@ type RootStackParamList = {
     navigation: LogInScreenNavigationProp;
   };
 
-export default function LogInScreen({ navigation }: Props) {
-
+export default function LogInScreen({ navigation }: Props): JSX.Element  {
 
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const { signInUser, forgotPassword, logoutUser } = useUserContext();
-
     const onSubmit = async () => {
         try {
             if (email && password) {
             console.log("Email" + email + "prøver å logge inn")
-            await signInUser({email, password});
+            await signInUser({email, password})
+                .then(() => navigation.navigate('HomeScreen'));
             console.log("her er brukeren" + FIREBASE_AUTH.currentUser?.email)
-            navigation.navigate('HomeScreen');
-            } 
+        } 
         } catch (error) {
-            console.log(error);
-            alert('Sign up failed');
+        console.log(error);
+        alert('Sign up failed');
         }
     };
 
@@ -82,16 +80,14 @@ export default function LogInScreen({ navigation }: Props) {
             <GreenLargeButton title='Sign In' onClick={onSubmit} />
             <Button title='sign out' onPress={handleSignout} />
             <DividerWithText title={"Or login with"}/>
+            <GitHubLoginButton navigation={navigation}/>
             
-            
-     {/*        <FaceBookLogin /> */}            
-
             <View style={styles.registeredText}>
                 <XSmallText children={"Don´t have an account? "} />
-                <SignInButton title={"Sign Up"} onClick={() => navigation.navigate('SignUp')} />
-
-            </View>
+                <SignInButton title={"Sign Up"} onClick={() => navigation.navigate('SignUp')} />           
         </View>
+    </View>
+   
     )
 };
 
