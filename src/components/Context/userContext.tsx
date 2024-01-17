@@ -5,9 +5,7 @@ import {
   onAuthStateChanged as onFirebaseAuthStateChanged,
   sendPasswordResetEmail,
   signInWithEmailAndPassword,
-  signInWithCredential,
   signOut,
-  FacebookAuthProvider
 } from "firebase/auth";
 import { addDoc, collection, doc, setDoc } from "firebase/firestore";
 import { FirebaseUser, UserContextType } from "../types";
@@ -25,7 +23,6 @@ export const UserContext = createContext<UserContextType>({
   registerUser: async () => {},
   logoutUser: async () => {},
   forgotPassword: async () => {},
-/*   signInWithFacebook: async () => {} */
 });
 
 export const useUserContext = () => useContext(UserContext);
@@ -35,9 +32,7 @@ export const UserContextProvider = ({ children }: any) => {
   const [initializing, setInitializing] = useState(true);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-//   const [request, response, promptAsync] = FaceBook.useAuthRequest({
-//     clientId: "1414315359174188",
-//   });
+
   WebBrowser.maybeCompleteAuthSession();
 
   // Listen to the Firebase Auth state and set the user
@@ -48,35 +43,6 @@ export const UserContextProvider = ({ children }: any) => {
     });
     return unsubscribe;
   }, [initializing]);
-
- /*  //Handle SignIn/LogIn with Facebook
-  const signInWithFacebook = async () => {
-    setLoading(true);
-    try {
-      console.log("inne i try")
-      await LoginManager.logInWithPermissions(['public_profile', 'email']);
-      console.log("Kommer u hit da")
-      const data = await AccessToken.getCurrentAccessToken();
-      console.log("prøver her da")
-      console.log(data + " data")
-      if (!data) {
-        console.log("data er null");
-        return;
-      }
-      console.log("halla")
-      const facebookCredential = FacebookAuthProvider.credential(data.accessToken);
-      console.log("halla" + facebookCredential.accessToken);
-      const response = await signInWithCredential(FIREBASE_AUTH, facebookCredential);
-    
-      console.log(response);
-     
-      return response;
-    } catch (e) {
-      console.log(e);
-    } finally {
-      setLoading(false);
-    }
-  } */
 
   // Function to register a new user
   const registerUser = async ({ email, password, firstName, lastName }: any) => {
@@ -89,7 +55,13 @@ export const UserContextProvider = ({ children }: any) => {
         password
       );
       const authUser = userCredentials.user;
+      await setDoc(doc(db, "Users", authUser.uid), {
+        email,
+        firstName,
+        lastName
+      });
       console.log(authUser);
+      console.log("sjekk databasen da HORE")
     } catch (error: any) {
       setError(error.message);
     } finally {
@@ -140,7 +112,6 @@ export const UserContextProvider = ({ children }: any) => {
     registerUser,
     logoutUser,
     forgotPassword,
-/*     signInWithFacebook */
   };
 
   return (
