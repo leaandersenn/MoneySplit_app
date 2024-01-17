@@ -49,16 +49,10 @@ export default function LogInScreen({ navigation }: Props): JSX.Element  {
 
     const forgotPasswordHandler = async () => {
         if (email)
-        forgotPassword(email).then(() => {
+        await forgotPassword(email).then(() => {
             setEmail("");
         });
     };
-
-    const handleSignout = async () => {
-        logoutUser();
-        console.log("User signed out");
-        console.log(FIREBASE_AUTH.currentUser + ": current user");
-    }
 
     return (
         <View style={styles.container}>
@@ -70,15 +64,8 @@ export default function LogInScreen({ navigation }: Props): JSX.Element  {
             <TextInputField value={email} placeholder='Email' onChangeText={setEmail} />
             <PasswordInput  value={password} placeholder='Password' onChangeText={setPassword} />
             <Spacer size={24} horizontal={false}/>
-           
-            <View style={styles.rememberForgot}>
-                <XSmallText children={"Remember me"}/>
-                <Spacer size={14} horizontal={true} />
-                <ForgotPasswordButton title={"Forgot Password?"} onClick={forgotPasswordHandler} />  
-            </View>
-            
+            <ForgotPasswordButton title={"Forgot Password?"} onClick={forgotPasswordHandler} />
             <GreenLargeButton title='Sign In' onClick={onSubmit} />
-            <Button title='sign out' onPress={handleSignout} />
             <DividerWithText title={"Or login with"}/>
             <GitHubLoginButton navigation={navigation}/>
             
