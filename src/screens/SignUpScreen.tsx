@@ -7,30 +7,22 @@ import { MediumText } from '../components/Text/MediumText';
 import { GreenLargeButton } from '../components/Buttons/GreenLargeButton';
 import BackButton from '../components/Buttons/BackButton';
 import Spacer from '../components/Spacer';
-import DividerWithText from '../components/Divider';
 import PasswordInput from '../components/InputFields/PasswordInput';
 import TextInputField from '../components/InputFields/TextInputField';
 import { useUserContext } from '../components/Context/userContext';
 import { addDoc, collection } from 'firebase/firestore';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { RootStackParamList } from './HomeScreen';
 
-type RootStackParamList = {
-    Home: undefined;
-    LogIn: undefined;
-    SignUp: undefined;
-    AfterLogin: undefined;
-    HomeScreen: undefined;
-  };
+  type SignUpScreenNavigationProp = NativeStackNavigationProp<RootStackParamList, 'SignUp'>;
   
-  type HomeScreenNavigationProp = NativeStackNavigationProp<RootStackParamList, 'Home'>;
-  
-  type Props = {
-    navigation: HomeScreenNavigationProp;
+  type SignUpProps = {
+    navigation: SignUpScreenNavigationProp;
   };
   
 
 
-export default function LogInScreen( {navigation}: Props) {
+export default function SignUpScreen( {navigation}: SignUpProps) {
     
     const [name, setName] = useState('');
     const [lastName, setLastName] = useState('');
@@ -51,7 +43,7 @@ export default function LogInScreen( {navigation}: Props) {
               await addDoc(collection(db, 'Users'), userData);
             } 
             console.log("User added to Firestore");
-            navigation.navigate('AfterLogin');
+            navigation.navigate('Home');
         } catch (error) {
             console.log(error);
             alert('Sign up failed');

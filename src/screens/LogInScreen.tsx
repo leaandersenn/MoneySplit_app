@@ -14,21 +14,16 @@ import TextInputField from '../components/InputFields/TextInputField';
 import PasswordInput from '../components/InputFields/PasswordInput';
 import { useUserContext } from '../components/Context/userContext';
 import GitHubLoginButton from '../components/Buttons/GitHubLoginButton';
+import { RootStackParamList } from './HomeScreen';
 
-type RootStackParamList = {
-    LogIn: undefined;
-    SignUp: undefined;
-    AfterLogin: undefined;
-    HomeScreen: undefined;
-  };
-  
+
   type LogInScreenNavigationProp = NativeStackNavigationProp<RootStackParamList, 'LogIn'>;
   
-  type Props = {
+  type LogInProps = {
     navigation: LogInScreenNavigationProp;
   };
 
-export default function LogInScreen({ navigation }: Props): JSX.Element  {
+export default function LogInScreen({ navigation }: LogInProps): JSX.Element  {
 
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
@@ -38,7 +33,7 @@ export default function LogInScreen({ navigation }: Props): JSX.Element  {
             if (email && password) {
             console.log("Email" + email + "prøver å logge inn")
             await signInUser({email, password})
-                .then(() => navigation.navigate('HomeScreen'));
+                .then(() => navigation.navigate('Home'));
             console.log("her er brukeren" + FIREBASE_AUTH.currentUser?.email)
         } 
         } catch (error) {

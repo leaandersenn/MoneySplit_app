@@ -9,15 +9,18 @@ import { FIREBASE_AUTH, db } from '../../firebaseConfig';
 import { GreenLargeButton } from '../components/Buttons/GreenLargeButton';
 import CreateNewSplitScreen from './CreateNewSplitScreen';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
+import SignOutButton from '../components/Buttons/SignOutButton';
+import { getAuth } from 'firebase/auth';
 
 
 export type RootStackParamList = {
-    Home: {user: UserType};
+    Home: undefined;
     Split: {split: SplitType};
     LogIn: undefined;
     SignUp: undefined;
     NewPayment: {split: SplitType, users: UserType[]};
     CreateNewSplitScreen: {user: UserType};
+
 }
 
 //type HomeScreenRouteProp = RouteProp<RootStackParamList, 'Home'>
@@ -28,41 +31,44 @@ type HomeScreenProps = {
   navigation: HomeScreenNavigationProp
 }
 
+
 const HomeScreen = ({navigation}: HomeScreenProps) => {
-  const [user, setUser] = useState<UserType>();
-  const [data, setData] = useState<SplitType[]>([]);
+    const [user, setUser] = useState<UserType>()
+    const [data, setData] = useState<SplitType[]>([])
+    const [loading, setLoading] = useState(true)
 
-  const currentUserEmail = FIREBASE_AUTH.currentUser?.email;
-  console.log('Current user: ', currentUserEmail);
-  
-  useEffect(() => {
-    const fetchData = async () => {
-          if (!FIREBASE_AUTH.currentUser?.email) {
-              console.log('No current user email available');
-              return;
-          }
-          try {
-              const usersQuery = query(collection(db, 'Users'), where('email', '==', currentUserEmail));
-              const querySnapshot = await getDocs(usersQuery);
-              if (!querySnapshot.empty) {
-                  const userDoc = querySnapshot.docs[0]; // Assuming email is unique and there's only one document
-                  console.log('User document data:', userDoc.data());
-                  setUser(userDoc.data() as UserType); // Cast the document data to UserType
-              } else {
-                  console.log('No user found with the given email');
-              }
-          } catch (error) {
-              console.error('Error fetching user document:', error);
-          }
-      };
 
-      fetchData();
-  }, []);
+    const currentUserEmail = FIREBASE_AUTH.currentUser?.email;
+    console.log('Current user: ', currentUserEmail);
     
-    const handleCreateNewSplit = () => {
-      console.log('Add new split')
-      navigation.navigate('CreateNewSplitScreen', {user: user})
-    };
+    useEffect(() => {
+      const fetchData = async () => {
+            if (!FIREBASE_AUTH.currentUser?.email) {
+                console.log('No current user email available');
+                return;
+            }
+            try {
+                const usersQuery = query(collection(db, 'Users'), where('email', '==', currentUserEmail));
+                const querySnapshot = await getDocs(usersQuery);
+                if (!querySnapshot.empty) {
+                    const userDoc = querySnapshot.docs[0]; // Assuming email is unique and there's only one document
+                    console.log('User document data:', userDoc.data());
+                    setUser(userDoc.data() as UserType); // Cast the document data to UserType
+                } else {
+                    console.log('No user found with the given email');
+                }
+            } catch (error) {
+                console.error('Error fetching user document:', error);
+            }
+        };
+  
+        fetchData();
+    }, []);
+      
+      const handleCreateNewSplit = () => {
+        console.log('Add new split')
+       /*  navigation.navigate('CreateNewSplitScreen', {user: user}) */
+      };
 
     useEffect(() => {
         const fetchData = async () => {
@@ -72,31 +78,42 @@ const HomeScreen = ({navigation}: HomeScreenProps) => {
           }
             try {
                 const items = [];
-                for (const docRef of user.splits) {
+                for (const docRef of user.splits!) {
                     const docSnapshot = await getDoc(docRef)
                     if (docSnapshot.exists()) {
-                        items.push({ ...docSnapshot.data(), id: docSnapshot.ref } as SplitType)
+                        items.push({ ...docSnapshot.data(), id: docSnapshot.ref } as any as SplitType)
                     }
                 }
+                console.log(items)
+                console.log("kommer hit")
                 setData(items)
+                console.log(data + "data, homescreen: 90")
             } catch (error) {
                 console.error("Error fetching data: ", error)
+            }
+            finally{
+              setLoading(false)
             }
         };
         
         fetchData()
     }, [user])
 
+    const handleSignOut = async () => {
+      const auth = getAuth();
+      try {
+          await auth
+           .signOut()
+           .then(() => navigation.navigate('LogIn'));
+
+      } catch (error) {
+          alert('Error signing out:');
+      }
+  };
+  
+
   return (
     <View style={styles.container}>
-        {/* <Button
-            title="Gå til Logg In"
-            onPress={() => navigation.navigate('LogIn')}
-        />
-        <Button
-            title="Gå til Sign Up"
-            onPress={() => navigation.navigate('SignUp')}
-        /> */}
       <TouchableOpacity
         style={styles.greenButton}
         onPress={handleCreateNewSplit}
@@ -119,6 +136,7 @@ const HomeScreen = ({navigation}: HomeScreenProps) => {
             })}
       </ScrollView>
       </>
+      <SignOutButton onClick={handleSignOut} />
     </View>
   )
 }
@@ -126,8 +144,7 @@ const HomeScreen = ({navigation}: HomeScreenProps) => {
 export default HomeScreen
 
 
-
-const styles = StyleSheet.create({
+  const styles = StyleSheet.create({
     container: {
       flex: 1,
       backgroundColor: '#ffff'
@@ -158,31 +175,3 @@ const styles = StyleSheet.create({
       zIndex: 1, // Ensures the button is on top of other content
     },
   });
-
-
-
-/* 
-
-    const [data, setData] = useState<SplitType[]>([])
-    
-    useEffect(() => {
-        const fetchData = async () => {
-            try {
-                const items = [];
-                for (const docRef of user.splits) {
-                    const docSnapshot = await getDoc(docRef)
-                    if (docSnapshot.exists()) {
-                        items.push({ ...docSnapshot.data(), id: docSnapshot.id } as SplitType)
-                    }
-                }
-                setData(items as SplitType[])
-                console.log(items)
-            } catch (error) {
-                console.error("Error fetching data: ", error)
-            }
-        };
-    
-        fetchData()
-    }, [])
-
-   */
