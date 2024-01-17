@@ -49,8 +49,8 @@ export default function LogInScreen() {
                 </View>
             </View>
             <TextInputField value={name} placeholder='First name' onChangeText={setName}/>
-            <TextInputField value={name} placeholder='Last name' onChangeText={setLastName}/>
-            <TextInputField value={name} placeholder='Email' onChangeText={setEmail}/>
+            <TextInputField value={lastName} placeholder='Last name' onChangeText={setLastName}/>
+            <TextInputField value={email} placeholder='Email' onChangeText={setEmail}/>
             
             <PasswordInput value={password} placeholder='Password' onChangeText={setPassword} />
             <Spacer size={21} horizontal={false}/>

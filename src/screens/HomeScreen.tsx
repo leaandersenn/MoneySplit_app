@@ -1,11 +1,14 @@
 import React, { useEffect, useState } from 'react'
-import { Button, SafeAreaView, ScrollView, StyleSheet, View } from 'react-native';
+import { Button, SafeAreaView, ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native';
 import { LargeText } from '../components/Text/LargeText';
-import { DocumentReference, DocumentSnapshot, collection, doc, getDoc, getDocs } from 'firebase/firestore';
+import { DocumentReference, DocumentSnapshot, collection, doc, getDoc, getDocs, query, where } from 'firebase/firestore';
 import { SplitType, UserType } from '../utils/types';
 import SplitCard from '../components/SplitCard';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { db } from '../../firebaseConfig';
+import { FIREBASE_AUTH, db } from '../../firebaseConfig';
+import { GreenLargeButton } from '../components/Buttons/GreenLargeButton';
+import CreateNewSplitScreen from './CreateNewSplitScreen';
+import FontAwesome from 'react-native-vector-icons/FontAwesome';
 
 
 export type RootStackParamList = {
@@ -14,6 +17,7 @@ export type RootStackParamList = {
     LogIn: undefined;
     SignUp: undefined;
     NewPayment: {split: SplitType, users: UserType[]};
+    CreateNewSplitScreen: {user: UserType};
 }
 
 //type HomeScreenRouteProp = RouteProp<RootStackParamList, 'Home'>
@@ -24,36 +28,41 @@ type HomeScreenProps = {
   navigation: HomeScreenNavigationProp
 }
 
-
 const HomeScreen = ({navigation}: HomeScreenProps) => {
-    const [user, setUser] = useState<UserType>()
-    const [data, setData] = useState<SplitType[]>([])
+  const [user, setUser] = useState<UserType>();
+  const [data, setData] = useState<SplitType[]>([]);
 
+  const currentUserEmail = FIREBASE_AUTH.currentUser?.email;
+  console.log('Current user: ', currentUserEmail);
 
-    useEffect(() => {
+  useEffect(() => {
       const fetchData = async () => {
-        try {
-          const docRef = doc(db, 'Users', 'wcpKHPAbtjZWEZzm5Puw')
-          getDoc(docRef)
-            .then((docSnapshot) => {
-              if (docSnapshot.exists()) {
-                console.log('Document data:', docSnapshot.data())
-                setUser(docSnapshot.data() as UserType); // Cast the document data to UserType
+          if (!currentUserEmail) {
+              console.log('No current user email available');
+              return;
+          }
+          try {
+              const usersQuery = query(collection(db, 'Users'), where('email', '==', currentUserEmail));
+              const querySnapshot = await getDocs(usersQuery);
+              if (!querySnapshot.empty) {
+                  const userDoc = querySnapshot.docs[0]; // Assuming email is unique and there's only one document
+                  console.log('User document data:', userDoc.data());
+                  setUser(userDoc.data() as UserType); // Cast the document data to UserType
               } else {
-                console.log('No such document!')
+                  console.log('No user found with the given email');
               }
-            })
-            .catch((error) => {
-              console.error('Error fetching document:', error)
-            });
-        } catch (error) {
-          console.error('Error in fetchData:', error)
-        }
+          } catch (error) {
+              console.error('Error fetching user document:', error);
+          }
       };
-  
-      fetchData()
-    }, [])
+
+      fetchData();
+  }, []);
     
+    const handleCreateNewSplit = () => {
+      console.log('Add new split')
+      navigation.navigate('CreateNewSplitScreen', {user: user})
+    };
 
     useEffect(() => {
         const fetchData = async () => {
@@ -69,10 +78,7 @@ const HomeScreen = ({navigation}: HomeScreenProps) => {
                         items.push({ ...docSnapshot.data(), id: docSnapshot.ref } as SplitType)
                     }
                 }
-                console.log(items)
-                console.log("kommer hit")
                 setData(items)
-                console.log(data)
             } catch (error) {
                 console.error("Error fetching data: ", error)
             }
@@ -80,7 +86,6 @@ const HomeScreen = ({navigation}: HomeScreenProps) => {
         
         fetchData()
     }, [user])
-
 
   return (
     <View style={styles.container}>
@@ -92,10 +97,16 @@ const HomeScreen = ({navigation}: HomeScreenProps) => {
             title="Gå til Sign Up"
             onPress={() => navigation.navigate('SignUp')}
         /> */}
+      <TouchableOpacity
+        style={styles.greenButton}
+        onPress={handleCreateNewSplit}
+        >
+      <FontAwesome name="plus" color="white" size={20}/>
+      </TouchableOpacity>
+
       <View style={styles.title}>
         <LargeText>{`Splits`}</LargeText>
       </View>
-      
       <>
       <ScrollView contentContainerStyle={styles.cards}>
         {data.map((e) => {
@@ -133,7 +144,19 @@ const styles = StyleSheet.create({
       marginLeft: 20,
       marginBottom: 10,
       flexDirection: 'row'
-    }
+    },
+    greenButton: {
+      position: 'absolute',
+      top: 90, // Adjust this value to position the button as needed
+      right: 20, // Adjust this value to position the button as needed
+      backgroundColor: '#43B05C', // Green color
+      width: 40,
+      height: 40,
+      borderRadius: 20,
+      justifyContent: 'center',
+      alignItems: 'center',
+      zIndex: 1, // Ensures the button is on top of other content
+    },
   });
 
 

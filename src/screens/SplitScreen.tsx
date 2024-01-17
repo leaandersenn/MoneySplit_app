@@ -13,9 +13,6 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { BlueLargeButton } from '../components/Buttons/BlueLargeButton';
 import { db } from '../../firebaseConfig';
 
-
-
-
 type SplitScreenRouteProp = RouteProp<RootStackParamList, 'Split'>
 type SplitScreenNavigationProp = NativeStackNavigationProp<RootStackParamList, 'Split'>
 
@@ -69,7 +66,7 @@ const SplitScreen = ({route, navigation}: SplitScreenProps) => {
                 for (const docRef of split.users) {
                     const docSnapshot = await getDoc(docRef);
                     if (docSnapshot.exists()) {
-                        items.push({ ...docSnapshot.data(), id: docSnapshot.ref } as UserType);
+                        items.push({ ...docSnapshot.data(), id: docSnapshot.id } as UserType);
                     }
                 }
                 setUsers(items);    
@@ -84,9 +81,8 @@ const SplitScreen = ({route, navigation}: SplitScreenProps) => {
 
 
     const findUserByCreatorRef = (creatorRef: DocumentReference): UserType | undefined => {
-        return users.find(user => user.id === creatorRef);
+        return users.find(user => creatorRef && user.id === creatorRef.id);
     };
-
 
   return (
     <SafeAreaView style={styles.white}>
@@ -138,8 +134,5 @@ const styles = StyleSheet.create({
         alignContent: 'flex-start'
       }
   });
-
-
-
 
 export default SplitScreen
