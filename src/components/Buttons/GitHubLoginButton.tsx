@@ -10,14 +10,9 @@ import { makeRedirectUri, useAuthRequest } from "expo-auth-session";
 import { doc, setDoc } from 'firebase/firestore';
 import { db, FIREBASE_AUTH } from '../../../firebaseConfig';
 import { colors} from '../../utils/colors';
+import { RootStackParamList } from '../../screens/HomeScreen';
 
-type RootStackParamList = {
-    LogIn: undefined;
-    SignUp: undefined;
-    AfterLogin: undefined;
-    HomeScreen: undefined;
-  };
-  
+
   type LogInScreenNavigationProp = NativeStackNavigationProp<RootStackParamList, 'LogIn'>;
   
   type Props = {
@@ -96,9 +91,9 @@ type RootStackParamList = {
           }, { merge: true }); 
         }
         console.log("sjekk databasen");
-        console.log(FIREBASE_AUTH.currentUser + "currentuser");
+        console.log(FIREBASE_AUTH.currentUser?.email + "currentuser");
         if (FIREBASE_AUTH.currentUser) {
-            navigation.navigate('AfterLogin');
+            navigation.navigate('Home');
         }
       }
 
