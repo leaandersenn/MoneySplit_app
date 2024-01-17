@@ -1,15 +1,31 @@
 import { StyleSheet, TouchableOpacity, Text } from "react-native";
-import { StyledButtonProps } from "../types";
 import { getAuth, signOut } from 'firebase/auth';
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 
-export default function SignOutButton() {
+type RootStackParamList = {
+    Home: undefined;
+    LogIn: undefined;
+    SignUp: undefined;
+    AfterLogin: undefined;
+    HomeScreen: undefined;
+  };
+  
+  type HomeScreenNavigationProp = NativeStackNavigationProp<RootStackParamList, 'Home'>;
+  
+  type Props = {
+    navigation: HomeScreenNavigationProp;
+  };
+  
+
+
+export default function SignOutButton({navigation}: Props) {
 
     const handleSignOut = async () => {
         const auth = getAuth();
         try {
             await auth
              .signOut()
-             .then(() => console.log('User signed out!'));
+             .then(() => navigation.navigate('HomeScreen'));
 
         } catch (error) {
             alert('Error signing out:');
