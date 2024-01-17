@@ -16,7 +16,8 @@
     ],
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.bendingspoons.amk.moneysplit"
+      "bundleIdentifier": "com.bendingspoons.amk.moneysplit",
+      "googleServicesFile": "./GoogleService-Info.plist"
     },
     "android": {
       "adaptiveIcon": {

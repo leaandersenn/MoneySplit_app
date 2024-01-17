@@ -14,6 +14,8 @@ import TextInputField from '../components/InputFields/TextInputField';
 import { useUserContext } from '../components/Context/userContext';
 import { FirebaseError } from 'firebase/app';
 import { addDoc, collection } from 'firebase/firestore';
+import { GithubAuthProvider, signInWithCredential } from "firebase/auth";
+import { makeRedirectUri, useAuthRequest } from "expo-auth-session";
 
 export default function LogInScreen() {
     
