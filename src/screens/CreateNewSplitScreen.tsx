@@ -83,8 +83,10 @@ export default function CreateNewSplitScreen() {
           splits: arrayUnion(docRef)
         });
       }
+      alert('Split created successfully');
     } catch (error) {
       console.error('Error creating split:', error);
+      alert('Split creation failed');
     }
   };
 
