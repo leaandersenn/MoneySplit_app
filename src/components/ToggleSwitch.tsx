@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import {Switch, TouchableOpacity} from 'react-native';
+import {Switch} from 'react-native';
 
 
 type ToggleSwitchProps ={

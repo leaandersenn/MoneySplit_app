@@ -4,7 +4,7 @@ import {View, StyleSheet} from 'react-native'
 import { colors } from '../utils/colors'
 import { MediumText, MediumTextWhite } from './Text/MediumText';
 import { XSmallText, XSmallTextWhite } from './Text/XSmallText';
-import { PaymentType } from '../utils/types';
+import { PaymentType, UserType } from '../utils/types';
 
 
 
@@ -16,7 +16,7 @@ type paymentProps = {
     payment: PaymentType; 
     partOfPayment: boolean;
     currency: string; //get from Split
-    //creatorData?: UserType
+    creatorData?: UserType
 }
 
 
@@ -35,7 +35,7 @@ const Payment = (props: paymentProps) => {
         (<View id={id} style={styles.bluePayment}>
             <MediumTextWhite>{`${props.payment.amount} ${props.currency}`}</MediumTextWhite>
             <XSmallTextWhite>{`${props.payment.title}`}</XSmallTextWhite>
-            {/* <XSmallTextWhite>{`${props.creatorData?.firstName} ${props.creatorData?.lastName}`}</XSmallTextWhite> */}
+            <XSmallTextWhite>{`${props.creatorData?.firstName} ${props.creatorData?.lastName}`}</XSmallTextWhite>
 
             <XSmallTextWhite>{`Your share is x ${props.currency}`}</XSmallTextWhite>
         </View>) 
@@ -43,7 +43,7 @@ const Payment = (props: paymentProps) => {
         (<View id={id} style={styles.greyPaymentLeft}>
             <MediumText>{`${props.payment.amount} ${props.currency}`}</MediumText>
             <XSmallText>{`${props.payment.title}`}</XSmallText>
-            {/* <XSmallText>{`${props.creatorData?.firstName} ${props.creatorData?.lastName}`}</XSmallText> */}
+            <XSmallText>{`${props.creatorData?.firstName} ${props.creatorData?.lastName}`}</XSmallText>
 
             <XSmallText>{'Your share is ' }</XSmallText>
         </View>)) 

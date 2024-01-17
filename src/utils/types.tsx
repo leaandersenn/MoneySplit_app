@@ -14,7 +14,7 @@ export interface TextProps {
 
 //Types
 export type UserType = {
-    id: DocumentReference,
+    id: string, //HER
     firstName: string, 
     lastName: string, 
     email: string, 
@@ -25,7 +25,7 @@ export type UserType = {
 
 export type PaymentType = {
     id: string,
-    creator: DocumentReference;
+    creator: string; //HER
     dateCreated: Date;
     amount: number;
     title: string;
@@ -41,7 +41,7 @@ export type SplitType = {
     currency: string,
     cardColor: string,
     paymentsID: DocumentReference[], 
-    users: DocumentReference[]; 
+    users: string[]; //HER
 }
 
 export type Debt = { //will be used as: to type a parameter (an array) for SplitCard, and for a Split (to be used in the Debt Simplification Algorithm)

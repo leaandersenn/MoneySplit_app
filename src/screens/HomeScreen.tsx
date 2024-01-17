@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { Button, SafeAreaView, ScrollView, StyleSheet, View } from 'react-native';
+import { ActivityIndicator, Button, SafeAreaView, ScrollView, StyleSheet, View } from 'react-native';
 import { LargeText } from '../components/Text/LargeText';
 import { DocumentReference, DocumentSnapshot, collection, doc, getDoc, getDocs } from 'firebase/firestore';
 import { SplitType, UserType } from '../utils/types';
@@ -28,6 +28,7 @@ type HomeScreenProps = {
 const HomeScreen = ({navigation}: HomeScreenProps) => {
     const [user, setUser] = useState<UserType>()
     const [data, setData] = useState<SplitType[]>([])
+    const [loading, setLoading] = useState(true)
 
 
     useEffect(() => {
@@ -48,7 +49,7 @@ const HomeScreen = ({navigation}: HomeScreenProps) => {
             });
         } catch (error) {
           console.error('Error in fetchData:', error)
-        }
+        } 
       };
   
       fetchData()
@@ -76,6 +77,9 @@ const HomeScreen = ({navigation}: HomeScreenProps) => {
             } catch (error) {
                 console.error("Error fetching data: ", error)
             }
+            finally{
+              setLoading(false)
+            }
         };
         
         fetchData()
@@ -84,21 +88,15 @@ const HomeScreen = ({navigation}: HomeScreenProps) => {
 
   return (
     <View style={styles.container}>
-        {/* <Button
-            title="Gå til Logg In"
-            onPress={() => navigation.navigate('LogIn')}
-        />
-        <Button
-            title="Gå til Sign Up"
-            onPress={() => navigation.navigate('SignUp')}
-        /> */}
       <View style={styles.title}>
         <LargeText>{`Splits`}</LargeText>
       </View>
       
       <>
       <ScrollView contentContainerStyle={styles.cards}>
-        {data.map((e) => {
+        {loading ? 
+          <ActivityIndicator style={styles.loading} size="large" color="#7aeb5e"/>
+          : data.map((e) => {
             return(
                 <SplitCard 
                     id={`${e.id}`}
@@ -122,6 +120,10 @@ const styles = StyleSheet.create({
       backgroundColor: '#ffff'
     },
     cards: {
+      alignItems: 'center'
+    },
+    loading: {
+      marginTop: 120,
       alignItems: 'center'
     },
     image: {

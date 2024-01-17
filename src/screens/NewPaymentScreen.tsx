@@ -59,7 +59,6 @@ export default function NewPaymentScreen({route, navigation}: NewPaymentScreenPr
         }
     
         setParticipants(newParticipants);
-        //Object.fromEntries(newParticipants)
     };
     
 
@@ -77,7 +76,7 @@ export default function NewPaymentScreen({route, navigation}: NewPaymentScreenPr
             currency: selectedCurrency,
             title: description,
             dateCreated: new Date(),
-            //creator: ,
+            //creator: , //also update the creator's 'payments' list with the DocumentReference newPaymentRef
             relatedSplit: Object.freeze(split.id),
             participants: Object.fromEntries(participants!)
           };
