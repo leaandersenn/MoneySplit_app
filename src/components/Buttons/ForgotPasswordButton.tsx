@@ -20,7 +20,6 @@ const styles = StyleSheet.create({
     },
     input: {
         borderRadius: 20,
-        paddingLeft: 20,
         marginBottom: 21,
     }
 });
