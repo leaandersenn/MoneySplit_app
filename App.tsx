@@ -34,10 +34,9 @@ type Props = {
 
 const Stack = createNativeStackNavigator();
 
-function Home({ navigation }: Props) {
+/* function Home({ navigation }: Props) {
   return (
     <View style={styles.container}>
-     {/*  <Image source={require('./src/assets/cards.webp')} style={styles.image}/> */}
       <LargeText>{"Money Split"}</LargeText>
       <MediumText>{"Money Split"}</MediumText>
       <SmallText>{"Money Split"}</SmallText>
@@ -55,7 +54,7 @@ function Home({ navigation }: Props) {
       <StatusBar style="auto" />
     </View>
   );
-}
+} */
 
 export default function App() {
   const [fontsLoaded, setFontsLoaded] = useState(false);
@@ -78,12 +77,11 @@ export default function App() {
   return (
     <UserContextProvider>
       <NavigationContainer>
-        <Stack.Navigator initialRouteName='Home' screenOptions={{ headerShown: false }}>
-          <Stack.Screen name="Home" component={Home} />
+        <Stack.Navigator initialRouteName='Login' screenOptions={{ headerShown: false }}>
           <Stack.Screen name="LogIn" component={LogInScreen} />
           <Stack.Screen name="SignUp" component={SignUpScreen} />
           <Stack.Screen name="AfterLogin" component={AfterLoginScreen} />
-          <Stack.Screen name="HomeScreen" component={HomeScreen} />
+          <Stack.Screen name="Home" component={HomeScreen} />
         </Stack.Navigator>
       </NavigationContainer>
     </UserContextProvider>
