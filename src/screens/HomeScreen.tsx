@@ -137,31 +137,3 @@ const styles = StyleSheet.create({
       flexDirection: 'row'
     }
   });
-
-
-
-/* 
-
-    const [data, setData] = useState<SplitType[]>([])
-    
-    useEffect(() => {
-        const fetchData = async () => {
-            try {
-                const items = [];
-                for (const docRef of user.splits) {
-                    const docSnapshot = await getDoc(docRef)
-                    if (docSnapshot.exists()) {
-                        items.push({ ...docSnapshot.data(), id: docSnapshot.id } as SplitType)
-                    }
-                }
-                setData(items as SplitType[])
-                console.log(items)
-            } catch (error) {
-                console.error("Error fetching data: ", error)
-            }
-        };
-    
-        fetchData()
-    }, [])
-
-   */

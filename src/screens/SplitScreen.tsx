@@ -72,7 +72,9 @@ const SplitScreen = ({route, navigation}: SplitScreenProps) => {
                 console.log(paymentItems)
             } catch (error) {
                 console.error("Error fetching payments: ", error)
-            }
+            }finally{
+                setLoading(false)
+              }
         };
     
         if (split.id instanceof DocumentReference) {
@@ -102,14 +104,10 @@ const SplitScreen = ({route, navigation}: SplitScreenProps) => {
             <Spacer horizontal={true} size={110}></Spacer>
             <MediumText>{split.name}</MediumText>
         </View>
-        <View>
-            <MediumText>Participants: </MediumText>
-            {users.map(user =>(
-                <SmallText>{user.firstName}</SmallText>
-            ))}
-        </View>
         <ScrollView contentContainerStyle={styles.scrollView}>
-        {payments.map((payment) => {
+        {loading ? 
+          <ActivityIndicator style={styles.loading} size="large" color="#7aeb5e"/>
+          : payments.map((payment) => {
                     const userData = usersMap.get(payment.creator)
                       return (
                           <Payment 
@@ -140,6 +138,10 @@ const styles = StyleSheet.create({
         flexGrow: 2,
         alignItems: 'center',
         paddingTop: 10, 
+    },
+    loading: {
+      marginTop: 120,
+      alignItems: 'center'
     },
     title:{
         marginTop: 15, 
