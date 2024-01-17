@@ -34,10 +34,10 @@ const HomeScreen = ({navigation}: HomeScreenProps) => {
 
   const currentUserEmail = FIREBASE_AUTH.currentUser?.email;
   console.log('Current user: ', currentUserEmail);
-
+  
   useEffect(() => {
-      const fetchData = async () => {
-          if (!currentUserEmail) {
+    const fetchData = async () => {
+          if (!FIREBASE_AUTH.currentUser?.email) {
               console.log('No current user email available');
               return;
           }
