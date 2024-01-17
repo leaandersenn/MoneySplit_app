@@ -21,9 +21,10 @@ type RootStackParamList = {
 
 export default function AfterLoginScreen( {navigation}: Props) {
     const user = FIREBASE_AUTH.currentUser
-    if (user) {
-    console.log('User email: ', user.email);
-    }
+        if (user) {
+        console.log('User email: ', user.email);
+        }
+        
     return(
         <View style={styles.container}>
             <Text>Du er logget inn som: {user?.email}</Text>
