@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { Button, SafeAreaView, ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native';
+import { Button, SafeAreaView, ScrollView, StyleSheet, TouchableOpacity, View, ActivityIndicator } from 'react-native';
 import { LargeText } from '../components/Text/LargeText';
 import { DocumentReference, DocumentSnapshot, collection, doc, getDoc, getDocs, query, where } from 'firebase/firestore';
 import { SplitType, UserType } from '../utils/types';
@@ -61,7 +61,6 @@ const HomeScreen = ({navigation}: HomeScreenProps) => {
                 console.error('Error fetching user document:', error);
             }
         };
-  
         fetchData();
     }, []);
       
@@ -114,6 +113,7 @@ const HomeScreen = ({navigation}: HomeScreenProps) => {
 
   return (
     <View style={styles.container}>
+
       <TouchableOpacity
         style={styles.greenButton}
         onPress={handleCreateNewSplit}
@@ -126,7 +126,9 @@ const HomeScreen = ({navigation}: HomeScreenProps) => {
       </View>
       <>
       <ScrollView contentContainerStyle={styles.cards}>
-        {data.map((e) => {
+        {loading ? 
+          <ActivityIndicator style={styles.loading} size="large" color="#7aeb5e"/>
+          : data.map((e) => {
             return(
                 <SplitCard 
                     id={`${e.id}`}
@@ -150,6 +152,10 @@ export default HomeScreen
       backgroundColor: '#ffff'
     },
     cards: {
+      alignItems: 'center'
+    },
+    loading: {
+      marginTop: 120,
       alignItems: 'center'
     },
     image: {
