@@ -6,35 +6,36 @@ import RNPickerSelect from 'react-native-picker-select';
 import TextInputField from '../components/InputFields/TextInputField';
 import { XSmallText } from '../components/Text/XSmallText';
 import { SmallText } from '../components/Text/SmallText';
-
-import { db } from '../../firebaseConfig'
-import { DocumentReference, addDoc, collection } from 'firebase/firestore';
 import { MediumText } from '../components/Text/MediumText';
 import { BlueLargeButton } from '../components/Buttons/BlueLargeButton';
-import { RouteProp, useNavigation } from '@react-navigation/native';
-import { RootStackParamList } from './HomeScreen';
 import BackButton from '../components/Buttons/BackButton';
 import { colors } from '../utils/colors';
+
+import { db } from '../../firebaseConfig'
+import { DocumentReference, addDoc, arrayUnion, collection, doc, updateDoc } from 'firebase/firestore';
+import { RouteProp } from '@react-navigation/native';
+import { RootStackParamList } from './HomeScreen';
 import ToggleSwitch from '../components/ToggleSwitch';
-import { UserType } from '../utils/types';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 
 
 
 type NewPaymentRouteProp = RouteProp<RootStackParamList, 'NewPayment'>
+type SplitScreenNavigationProp = NativeStackNavigationProp<RootStackParamList, 'NewPayment'>
 
 type NewPaymentScreenProps = {
   route: NewPaymentRouteProp
+  navigation: SplitScreenNavigationProp
 }
 
 
-export default function NewPaymentScreen({route}: NewPaymentScreenProps) {
+export default function NewPaymentScreen({route, navigation}: NewPaymentScreenProps) {
     const [amount, setAmount] = useState('');
     const [description, setDescription] = useState('');
     const [selectedCurrency, setSelectedCurrency] = useState<string | null>(null)
     const [selectedUsers, setSelectedUsers] = useState(new Set<DocumentReference>())
-    const [participants, setParticipants] = useState<DocumentReference[]>()
+    const [participants, setParticipants] = useState<Map<string, number>>()
 
-    const navigation = useNavigation();
 
     const { split } = route.params
     const { users } = route.params
@@ -48,24 +49,19 @@ export default function NewPaymentScreen({route}: NewPaymentScreenProps) {
     // If currency is not selected, the currency of the split is used
     // Currency converter, fetch Splits currency and convert accordingly
 
-    const handleSelectUser = (ref: DocumentReference) => {
-        if (!selectedUsers) {
-            console.error("selectedUsers is undefined");
-            return;
-        }
-        const newSelectedUsers = new Set(selectedUsers);
-        if (selectedUsers && selectedUsers.has(ref)) {
-            newSelectedUsers.delete(ref);
+    const handleSelectUser = (userEmail: string) => {
+        const newParticipants = new Map(participants);
+    
+        if (newParticipants.has(userEmail)) {
+            newParticipants.delete(userEmail);
         } else {
-            newSelectedUsers.add(ref);
+            newParticipants.set(userEmail, 11); // should first set the number automatically (equal divison between all selected participants). The user should be able to edit this.
         }
-        setSelectedUsers(newSelectedUsers);
-
-        const participantsArray = Array.from(newSelectedUsers)
-        console.log('participantsArray:'+ participantsArray)
-        setParticipants(participantsArray)
-        console.log('participants'+ participantsArray)
+    
+        setParticipants(newParticipants);
+        //Object.fromEntries(newParticipants)
     };
+    
 
     const handleCreatePayment = async () => {
         if (!amount || !selectedCurrency) {
@@ -79,15 +75,24 @@ export default function NewPaymentScreen({route}: NewPaymentScreenProps) {
           const paymentData = {
             amount: parseFloat(amount),
             currency: selectedCurrency,
-            description: description,
+            title: description,
             dateCreated: new Date(),
-            relatedSplit: split.id,
-            participants: participants
+            //creator: ,
+            relatedSplit: Object.freeze(split.id),
+            participants: Object.fromEntries(participants!)
           };
-          console.log('paymentData: ' + paymentData)
     
-          await addDoc(collection(db, 'Payments'), paymentData);
-          alert('Payment added successfully');
+          const newPaymentRef = await addDoc(collection(db, 'Payments'), paymentData);
+          console.log('newPaymentRef: ' )
+          console.log(newPaymentRef.path)
+
+          console.log('paymentData.relatedSplit')
+          console.log(paymentData.relatedSplit.path)
+            await updateDoc(paymentData.relatedSplit, {
+                paymentsID: arrayUnion(newPaymentRef)
+            });
+
+            alert('Payment added successfully');
         } catch (error) {
           console.error('Error adding payment:', error);
           alert('Error adding payment');
@@ -144,7 +149,7 @@ export default function NewPaymentScreen({route}: NewPaymentScreenProps) {
                 renderItem={({ item }) => (
                     <View style={styles.checkboxStyle}>
                         <ToggleSwitch
-                            onValueChange={() => handleSelectUser(item.id)}
+                            onValueChange={() => handleSelectUser(item.email)}
                         />
                         <XSmallText>{item.firstName} {item.lastName}</XSmallText>
                     </View>

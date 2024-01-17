@@ -26,6 +26,7 @@ export type UserType = {
 export type PaymentType = {
     id: string,
     creator: DocumentReference;
+    dateCreated: Date;
     amount: number;
     title: string;
     participants: Map<string, number>;
