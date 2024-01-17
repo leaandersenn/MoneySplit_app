@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { PaymentType, UserType } from '../utils/types';
-import { DocumentReference, getDoc } from 'firebase/firestore';
+import { onSnapshot, doc, DocumentReference, getDoc } from 'firebase/firestore';
 import { StyleSheet, View, ScrollView, SafeAreaView } from 'react-native';
 import Payment from '../components/Payment';
 import { RouteProp } from '@react-navigation/native';
@@ -11,6 +11,7 @@ import Spacer from '../components/Spacer';
 import { MediumText } from '../components/Text/MediumText';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { BlueLargeButton } from '../components/Buttons/BlueLargeButton';
+import { db } from '../../firebaseConfig';
 
 
 
@@ -31,24 +32,34 @@ const SplitScreen = ({route, navigation}: SplitScreenProps) => {
     const { split } = route.params
 
     useEffect(() => {
-        const fetchData = async () => {
+        // Define a function inside useEffect to fetch payments
+        const fetchPayments = async (paymentsID: DocumentReference[]) => {
             try {
-                const items = [];
-                for (const docRef of split.paymentsID) {
-                    const docSnapshot = await getDoc(docRef);
-                    if (docSnapshot.exists()) {
-                        items.push({ ...docSnapshot.data(), id: docSnapshot.id } as PaymentType);
-                    }
-                }
-                setPayments(items);
-                console.log(items);
+                const paymentsPromises = paymentsID.map(paymentRef => getDoc(paymentRef));
+                const paymentDocs = await Promise.all(paymentsPromises);
+                const paymentItems = paymentDocs.map(doc => ({ ...doc.data(), id: doc.id } as PaymentType));
+                setPayments(paymentItems);
             } catch (error) {
-                console.error("Error fetching data: ", error);
+                console.error("Error fetching payments: ", error);
             }
         };
     
-        fetchData();
-    }, []); 
+        if (split.id instanceof DocumentReference) {
+            // Subscribe to the Split document for real-time updates
+            const unsubscribe = onSnapshot(split.id, (docSnapshot) => {
+                if (docSnapshot.exists()) {
+                    const splitData = docSnapshot.data();
+                    fetchPayments(splitData.paymentsID);
+                }
+            });
+    
+            // Return a cleanup function to unsubscribe
+            return () => unsubscribe();
+        } else {
+            console.error('split.id is not a DocumentReference:', split.id);
+        }
+    }, []); // Empty dependency array for setup on mount only
+    
 
 
     useEffect(() => {
