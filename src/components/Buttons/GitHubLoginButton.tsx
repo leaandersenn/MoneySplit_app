@@ -1,8 +1,7 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { StyleSheet, View, useColorScheme} from 'react-native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { XSmallText } from '../Text/XSmallText';
-import { useUserContext } from '../Context/userContext';
 import { createTokenWithCode } from '../../utils/createGitHubToken';
 import { FontAwesome as Icon } from "@expo/vector-icons";
 import * as WebBrowser from "expo-web-browser";
@@ -10,6 +9,7 @@ import { GithubAuthProvider, signInWithCredential } from "firebase/auth";
 import { makeRedirectUri, useAuthRequest } from "expo-auth-session";
 import { doc, setDoc } from 'firebase/firestore';
 import { db, FIREBASE_AUTH } from '../../../firebaseConfig';
+import { colors} from '../../utils/colors';
 
 type RootStackParamList = {
     LogIn: undefined;
@@ -35,9 +35,6 @@ type RootStackParamList = {
 
   export default function GitHubLoginButton( { navigation }: Props): JSX.Element {
     const currentTheme = useColorScheme();
-    const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
-    const { signInUser, forgotPassword, logoutUser } = useUserContext();
     const [request, response, promptAsync] = useAuthRequest(
         {
           clientId: process.env.EXPO_PUBLIC_GITHUB_CLIENT_ID!,
@@ -106,18 +103,30 @@ type RootStackParamList = {
       }
 
       return(
-        <View>
+        <View style={styles.button}>
         <Icon.Button
-        name="github"
-        color={currentTheme === "dark" ? "white" : "black"}
-        backgroundColor="transparent"
-        size={30}
-        onPress={() => {
-            promptAsync({ windowName: "Code with Beto" });
-        }}
+            name="github"
+            color={currentTheme === "dark" ? "white" : "black"}
+            backgroundColor="transparent"
+            size={30}
+            onPress={() => {
+                promptAsync({ windowName: "Code with Beto" });
+            }}
         >
         <XSmallText children={"Sign in with GitHub"} />
         </Icon.Button>
     </View>
       );
   }
+
+  const styles = StyleSheet.create({
+    button: {
+        borderRadius: 20,
+        borderWidth: 1,
+        borderColor: colors.graydark,
+        width: 324, 
+        height: 48,
+        justifyContent: 'center',
+        alignItems: 'center'
+    },
+});
