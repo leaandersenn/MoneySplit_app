@@ -18,6 +18,7 @@ import { UserContextProvider } from './src/components/Context/userContext';
 import { registerRootComponent } from 'expo';
 import HomeScreen, { RootStackParamList } from './src/screens/HomeScreen';
 import SplitScreen from './src/screens/SplitScreen';
+import CreateNewSplitScreen from './src/screens/CreateNewSplitScreen';
 
 
 const Stack = createNativeStackNavigator();
@@ -45,11 +46,12 @@ export default function App() {
     <UserContextProvider>
       <NavigationContainer>
         <Stack.Navigator initialRouteName='Login' screenOptions={{ headerShown: false }}>
-          <Stack.Screen name="Home" component={HomeScreen} />
           <Stack.Screen name="LogIn" component={LogInScreen} />
+          <Stack.Screen name="Home" component={HomeScreen} />
           <Stack.Screen name="SignUp" component={SignUpScreen} />
           <Stack.Screen name="Split" component={SplitScreen} />
           <Stack.Screen name="NewPayment" component={NewPaymentScreen} />
+          <Stack.Screen name="CreateNewSplitScreen" component={CreateNewSplitScreen} />
         </Stack.Navigator>
       </NavigationContainer>
     </UserContextProvider>
