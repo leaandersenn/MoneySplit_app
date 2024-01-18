@@ -1,6 +1,7 @@
-import React, { useEffect, useState } from 'react'
-import { Text, View, TextInput, Button, StyleSheet, FlatList, TouchableOpacity } from 'react-native'
+import React, { useEffect, useState } from 'react';
+import { Text, View, TextInput, Button, StyleSheet, FlatList, TouchableOpacity } from 'react-native';
 import { CheckBox } from 'react-native-elements'
+
 import RNPickerSelect from 'react-native-picker-select'
 
 import { DocumentSnapshot, collection, getDocs, addDoc, updateDoc, arrayUnion, doc } from 'firebase/firestore'
@@ -11,6 +12,7 @@ import { UserType } from '../utils/types'
 import { XSmallText } from '../components/Text/XSmallText'
 import TextInputField from '../components/InputFields/TextInputField'
 import { BlueLargeButton } from '../components/Buttons/BlueLargeButton'
+import { render } from '@testing-library/react-native';
 
 export default function CreateNewSplitScreen() {
   const [splitName, setSplitName] = useState<string>('')
@@ -168,6 +170,10 @@ export default function CreateNewSplitScreen() {
     </View>
   )
 }
+
+test('createNewSplit', async () => {
+  render(<CreateNewSplitScreen />);
+});
 
 const styles = StyleSheet.create({
   container: {
