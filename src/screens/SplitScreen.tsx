@@ -140,10 +140,12 @@ const SplitScreen = ({route, navigation }: SplitScreenProps) => {
                   }})
             }
         </ScrollView>
+        <View style={styles.bottomButton}>
         <BlueLargeButton 
             title={"Add payment"} 
             onClick={() => navigation.navigate('NewPayment', {split: split, users: users, userId: docRef})}
         />
+        </View>
     </SafeAreaView>
   )
 }
@@ -152,7 +154,6 @@ const SplitScreen = ({route, navigation }: SplitScreenProps) => {
 const styles = StyleSheet.create({
     white: {
         flex: 1,
-        backgroundColor: '#ffff',
     },
     scrollView: {
         flexGrow: 2,
@@ -170,7 +171,14 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'flex-start',
         alignContent: 'flex-start'
-      }
+    }, 
+    bottomButton:{
+      
+      padding: 15,
+      marginBottom: 15,
+      flexDirection: 'column',
+      alignItems: 'center', 
+    }
   });
 
 

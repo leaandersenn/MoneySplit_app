@@ -14,6 +14,7 @@ import { RouteProp } from '@react-navigation/native';
 import { RootStackParamList } from './HomeScreen';
 import ToggleSwitch from '../components/ToggleSwitch';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import Spacer from '../components/Spacer';
 
 // -------- TODODS -------- //
 // Connect from Split View to set "Add Payment" in context of a Split and add it to the header
@@ -96,59 +97,67 @@ export default function NewPaymentScreen({route, navigation}: NewPaymentScreenPr
 
     return (
         <View style={styles.container}>
-            <View style={styles.title}>
+            <View style={styles.back}>
                 <BackButton color={colors.tertiary}/>
             </View>
 
-            <MediumText>New Payment</MediumText>
-            <SmallText>in {split.name}</SmallText>
+            <View style={styles.title}>
+                <MediumText>New Payment</MediumText>
+                <SmallText>in {split.name}</SmallText>
+            </View>
                 
-            <View style={styles.amountContainer}>
-                <TextInput
-                    style={styles.input}
-                    placeholder="0"
-                    value={amount}
-                    onChangeText={setAmount}
-                    keyboardType="numeric"
-                />
-                <SelectDropdown
-                    data={currencyOptions}
-                    onSelect={(selectedItem, index) => {
-                        console.log(selectedItem, index);
-                        setSelectedCurrency(selectedItem.value);
-                    }}
-                    buttonTextAfterSelection={(selectedItem, index) => {
-                        return selectedItem.label;
-                    }}
-                    rowTextForSelection={(item, index) => {
-                        return item.label;
-                    }}
-                    defaultValueByIndex={0} 
-                />
-            </View>
-        
-        <TextInputField 
-            placeholder={'Add description'} 
-            value={description} 
-            onChangeText={setDescription}
-        />
-
-        <XSmallText>Who is part of the payment?</XSmallText>
-        
-        <View style={styles.listContainer}>
-        {users.map((user) => (
-            <View key={user.email} style={styles.checkboxStyle}>
-            <ToggleSwitch
-                onValueChange={() => handleSelectUser(user.email)}
+            <View style={styles.padded}>
+                <View style={styles.amountContainer}>
+                    <TextInput
+                        style={styles.input}
+                        placeholder="0"
+                        value={amount}
+                        onChangeText={setAmount}
+                        keyboardType="numeric"
+                    />
+                    <SelectDropdown
+                        data={currencyOptions}
+                        onSelect={(selectedItem, index) => {
+                            console.log(selectedItem, index);
+                            setSelectedCurrency(selectedItem.value);
+                        }}
+                        buttonTextAfterSelection={(selectedItem, index) => {
+                            return selectedItem.label;
+                        }}
+                        rowTextForSelection={(item, index) => {
+                            return item.label;
+                        }}
+                        defaultValueByIndex={0} 
+                    />
+                </View>
+            
+            <TextInputField 
+                placeholder={'Add description'} 
+                value={description} 
+                onChangeText={setDescription}
             />
-            <XSmallText>{user.firstName} {user.lastName}</XSmallText>
+
+            <XSmallText>Who is part of the payment?</XSmallText>
+            
+            <View style={styles.contents}>
+            {users.map((user) => (
+                <View key={user.email} style={styles.checkboxStyle}>
+                <ToggleSwitch
+                    onValueChange={() => handleSelectUser(user.email)}
+                />
+                <Spacer horizontal={true} size={5}></Spacer>
+                <XSmallText>{user.firstName} {user.lastName}</XSmallText>
+                </View>
+            ))}
             </View>
-        ))}
         </View>
-        <BlueLargeButton
-            title="Add Payment"
-            onClick={handleCreatePayment}
-        />
+
+        <View style={styles.bottomButton}>
+            <BlueLargeButton
+                title="Add Payment"
+                onClick={handleCreatePayment}
+            />
+        </View>
     </View>
   );
 }
@@ -157,12 +166,51 @@ const styles = StyleSheet.create({
     
     container: {
         flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
         padding: 20, 
         paddingTop: 100, 
         paddingBottom: 200
     },
+    contents: {
+        padding: 20, 
+        alignContent: 'center'
+    },
+    center:{
+        justifyContent: 'center',
+        alignContent: 'center',
+    },
+    padded:{
+        marginTop: 20,
+        marginBottom: 20,
+        padding: 20
+    },
+    back:{
+        marginTop: 15, 
+        marginBottom: 15,
+        flexDirection: 'row',
+        alignContent: 'flex-start'
+      },
+      title:{
+        marginTop: 15, 
+        marginBottom: 30,
+        flexDirection: 'column',
+        alignItems: 'center'
+      },
+      centerItem:{
+        marginTop: 15, 
+        marginBottom: 15,
+        flexDirection: 'column',
+        alignItems: 'center'
+      },
+      bottomButton:{
+        marginTop: 75, 
+        marginBottom: 15,
+        flexDirection: 'column',
+        alignItems: 'center'
+      },
+      row:{
+        flexDirection: 'row', 
+        alignContent: 'center'
+      },
     checkboxStyle: {
         flexDirection: 'row',
         alignItems: 'center',
@@ -179,15 +227,4 @@ const styles = StyleSheet.create({
         padding: 10,
         fontFamily: 'Quicksand',
     },
-    title:{
-        marginTop: 15, 
-        marginLeft: 20,
-        marginBottom: 15,
-        flexDirection: 'row',
-        justifyContent: 'flex-start',
-        alignContent: 'flex-start'
-      },
-      listContainer: {
-        width: '100%', 
-      },
 });

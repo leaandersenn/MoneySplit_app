@@ -5,6 +5,7 @@ import { colors } from '../utils/colors'
 import { MediumText, MediumTextWhite } from './Text/MediumText';
 import { XSmallText, XSmallTextWhite } from './Text/XSmallText';
 import { PaymentType, UserType } from '../utils/types';
+import { FIREBASE_AUTH } from '../../firebaseConfig';
 
 
 
@@ -13,9 +14,9 @@ import { PaymentType, UserType } from '../utils/types';
 
 type paymentProps = {
     id: string
-    payment: PaymentType; 
-    partOfPayment: boolean;
-    currency: string; //get from Split
+    payment: PaymentType
+    partOfPayment: boolean
+    currency: string
     creatorData?: UserType
 }
 
@@ -27,6 +28,8 @@ type paymentProps = {
 
 const Payment = (props: paymentProps) => {
     const id = props.id
+
+    const emailCurrentUser = FIREBASE_AUTH.currentUser?.email
     
     
     return (

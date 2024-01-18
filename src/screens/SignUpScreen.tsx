@@ -35,7 +35,7 @@ export default function SignUpScreen( {navigation}: SignUpProps) {
             const userData = {
                 firstName: name,
                 lastName: lastName,
-                email: email
+                email: email.toLowerCase
               }
               await addDoc(collection(db, 'Users'), userData);
             } 
