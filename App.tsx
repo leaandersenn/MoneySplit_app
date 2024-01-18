@@ -16,45 +16,12 @@ import NewPaymentScreen from './src/screens/NewPaymentScreen';
 
 import { UserContextProvider } from './src/components/Context/userContext';
 import { registerRootComponent } from 'expo';
-import HomeScreen from './src/screens/HomeScreen';
+import HomeScreen, { RootStackParamList } from './src/screens/HomeScreen';
+import SplitScreen from './src/screens/SplitScreen';
 
-type RootStackParamList = {
-  Home: undefined;
-  LogIn: undefined;
-  SignUp: undefined;
-  AfterLogin: undefined;
-  HomeScreen: undefined;
-};
-
-type HomeScreenNavigationProp = NativeStackNavigationProp<RootStackParamList, 'Home'>;
-
-type Props = {
-  navigation: HomeScreenNavigationProp;
-};
 
 const Stack = createNativeStackNavigator();
 
-/* function Home({ navigation }: Props) {
-  return (
-    <View style={styles.container}>
-      <LargeText>{"Money Split"}</LargeText>
-      <MediumText>{"Money Split"}</MediumText>
-      <SmallText>{"Money Split"}</SmallText>
-      <XSmallText>{"Money Split"}</XSmallText>
-
-      <Button
-        title="Gå til Logg In"
-        onPress={() => navigation.navigate('LogIn')}
-      />
-      <Button
-        title="Gå til Sign Up"
-        onPress={() => navigation.navigate('SignUp')}
-      />
-
-      <StatusBar style="auto" />
-    </View>
-  );
-} */
 
 export default function App() {
   const [fontsLoaded, setFontsLoaded] = useState(false);
@@ -71,17 +38,18 @@ export default function App() {
   }, []);
 
   if (!fontsLoaded) {
-    return null; // Or some kind of loading indicator
+    return null;
   }
 
   return (
     <UserContextProvider>
       <NavigationContainer>
         <Stack.Navigator initialRouteName='Login' screenOptions={{ headerShown: false }}>
+          <Stack.Screen name="Home" component={HomeScreen} />
           <Stack.Screen name="LogIn" component={LogInScreen} />
           <Stack.Screen name="SignUp" component={SignUpScreen} />
-          <Stack.Screen name="AfterLogin" component={AfterLoginScreen} />
-          <Stack.Screen name="Home" component={HomeScreen} />
+          <Stack.Screen name="Split" component={SplitScreen} />
+          <Stack.Screen name="NewPayment" component={NewPaymentScreen} />
         </Stack.Navigator>
       </NavigationContainer>
     </UserContextProvider>
@@ -96,9 +64,5 @@ const styles = StyleSheet.create({
     backgroundColor: '#ffff',
     alignItems: 'center',
     justifyContent: 'center',
-  },
-  image: {
-    width: 100, // Set your desired width
-    height: 100, // Set your desired height
   },
 });

@@ -14,18 +14,18 @@ export interface TextProps {
 
 //Types
 export type UserType = {
-    id: string,
+    id: string, 
     firstName: string, 
     lastName: string, 
     email: string, 
-    payments?: DocumentReference[] //refs to payments user owns
-    splits?: DocumentReference[] //refs to splits user participates in --> if we have this, we will have to iterate through all Users and update their splits-list whenever a new Split is added...
+    payments: DocumentReference[] //refs to payments user owns
+    splits: DocumentReference[] //refs to splits user participates in --> if we have this, we will have to iterate through all Users and update their splits-list whenever a new Split is added...
 }
 
 
 export type PaymentType = {
     id: string,
-    creator: string; //HER
+    creator: string; 
     dateCreated: Date;
     amount: number;
     title: string;
@@ -33,14 +33,15 @@ export type PaymentType = {
     relatedSplit: DocumentReference; 
 }
 
+
 export type SplitType = {
-    id: string,
+    id: DocumentReference,
     name: string,
     creationDate: Date,
     currency: string,
     cardColor: string,
     paymentsID: DocumentReference[], 
-    users: string[]; //HER
+    users: string[]; 
 }
 
 export type Debt = { //will be used as: to type a parameter (an array) for SplitCard, and for a Split (to be used in the Debt Simplification Algorithm)
