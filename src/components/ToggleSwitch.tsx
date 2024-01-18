@@ -1,5 +1,5 @@
-import React, {useState} from 'react';
-import {Switch} from 'react-native';
+import React, { useState } from 'react'
+import { Switch, StyleSheet, View } from 'react-native'
 
 
 type ToggleSwitchProps ={
@@ -7,7 +7,7 @@ type ToggleSwitchProps ={
 }
 
 const ToggleSwitch = ({onValueChange}: ToggleSwitchProps) => {
-  const [isEnabled, setIsEnabled] = useState(true);
+  const [isEnabled, setIsEnabled] = useState(true)
 
   const toggleSwitch = () => {
     setIsEnabled(previousState => !previousState)
@@ -22,8 +22,8 @@ const ToggleSwitch = ({onValueChange}: ToggleSwitchProps) => {
         onValueChange={toggleSwitch}
         value={!isEnabled}
       />
-  );
-};
+  )
+}
 
 
 export default ToggleSwitch;

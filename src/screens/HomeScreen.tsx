@@ -21,11 +21,10 @@ export type RootStackParamList = {
     CreateNewSplitScreen: {user: UserType | undefined};
 }
 
-//type HomeScreenRouteProp = RouteProp<RootStackParamList, 'Home'>
+
 type HomeScreenNavigationProp = NativeStackNavigationProp<RootStackParamList, 'Home'>
 
 type HomeScreenProps = {
-  //route: HomeScreenRouteProp
   navigation: HomeScreenNavigationProp
 }
 
@@ -123,7 +122,8 @@ const HomeScreen = ({navigation}: HomeScreenProps) => {
       
       <>
       <ScrollView contentContainerStyle={styles.cards}>
-        {loading ? 
+        {data.length>0 ?
+        (loading ? 
           <ActivityIndicator style={styles.loading} size="large" color="#7aeb5e"/>
           : data.map((e) => {
             return(
@@ -132,7 +132,10 @@ const HomeScreen = ({navigation}: HomeScreenProps) => {
                     split={e}
                     onClick={() => navigation.navigate('Split', {split: e })}
                 />)
-            })}
+            })
+            )
+            : (<></>)
+            }
       </ScrollView>
       <SignOutButton onClick={handleSignOut}/>
       <Spacer size={20} horizontal={false}/>

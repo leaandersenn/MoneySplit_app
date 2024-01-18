@@ -10,6 +10,10 @@ import SelectDropdown from 'react-native-select-dropdown'
 import ToggleSwitch from '../components/ToggleSwitch'
 import { RootStackParamList } from './HomeScreen'
 import { NativeStackNavigationProp } from '@react-navigation/native-stack'
+import { colors } from '../utils/colors'
+import BackButton from '../components/Buttons/BackButton'
+import { MediumText } from '../components/Text/MediumText'
+import Spacer from '../components/Spacer'
 
 //TODO: communication w/ Exchange API
 type CreateNewSplitScreenNavigationProp = NativeStackNavigationProp<RootStackParamList, 'CreateNewSplitScreen'>
@@ -94,71 +98,89 @@ export default function CreateNewSplitScreen({navigation}: CreateNewSplitScreenS
 
   return (
     <View style={styles.container}>
+      <View style={styles.row}>
+          <BackButton color={colors.tertiary}/>
+      </View>
+      <View style={styles.title}>
+          <MediumText>New Split</MediumText>
+      </View>
       
       <View style={styles.styleButtonsContainer}>
-      <TouchableOpacity
-          style={[
-            styles.styleButton,
-            styles.styleButtonRed,
-            selectedColor === 'pink' && styles.selectedStyleButton
-          ]}
-          onPress={() => handleSelectColor('pink')}
-        />
         <TouchableOpacity
-          style={[
-            styles.styleButton,
-            styles.styleButtonGreen,
-            selectedColor === 'green' && styles.selectedStyleButton
-          ]}
-          onPress={() => handleSelectColor('green')}
-        />
-        <TouchableOpacity
-          style={[
-            styles.styleButton,
-            styles.styleButtonBlue,
-            selectedColor === 'blue' && styles.selectedStyleButton
-          ]}
-          onPress={() => handleSelectColor('blue')}
-        />
+            style={[
+              styles.styleButton,
+              styles.styleButtonRed,
+              selectedColor === 'pink' && styles.selectedStyleButton
+            ]}
+            onPress={() => handleSelectColor('pink')}
+          />
+          <TouchableOpacity
+            style={[
+              styles.styleButton,
+              styles.styleButtonGreen,
+              selectedColor === 'green' && styles.selectedStyleButton
+            ]}
+            onPress={() => handleSelectColor('green')}
+          />
+          <TouchableOpacity
+            style={[
+              styles.styleButton,
+              styles.styleButtonBlue,
+              selectedColor === 'blue' && styles.selectedStyleButton
+            ]}
+            onPress={() => handleSelectColor('blue')}
+          />
       </View>
 
-      <XSmallText>Give the Split a name...</XSmallText>
-      <TextInputField
-        placeholder="Name"
-        value={splitName}
-        onChangeText={setSplitName}
-      />
-
-      <XSmallText>Select a currency...</XSmallText>
-      <SelectDropdown
-          data={currencyOptions}
-          onSelect={(selectedItem, index) => {
-              console.log(selectedItem, index);
-              setSelectedCurrency(selectedItem.value);
-          }}
-          buttonTextAfterSelection={(selectedItem, index) => {
-              return selectedItem.label;
-          }}
-          rowTextForSelection={(item, index) => {
-              return item.label;
-          }}
-          defaultValue={''} 
-      />
-
-      <FlatList
-        data={users}
-        keyExtractor={(item, index) => index.toString()}
-        renderItem={({ item }) => (
-          <View style={styles.userItem}>
-            <ToggleSwitch
-              onValueChange={() => handleSelectUser(item)}
-            />
-            <XSmallText>{item.firstName} {item.lastName}</XSmallText>
-          </View>
-        )}
+      <View style={styles.center}>
+        <TextInputField
+          placeholder="Give the Split a name..."
+          value={splitName}
+          onChangeText={setSplitName}
         />
 
-      <BlueLargeButton title="Create New Split" onClick={createNewSplit} />
+        <View style={styles.centerItem}>
+        <XSmallText>Select a currency...</XSmallText>
+          <SelectDropdown
+              data={currencyOptions}
+              onSelect={(selectedItem, index) => {
+                  console.log(selectedItem, index);
+                  setSelectedCurrency(selectedItem.value);
+              }}
+              buttonTextAfterSelection={(selectedItem, index) => {
+                  return selectedItem.label;
+              }}
+              rowTextForSelection={(item, index) => {
+                  return item.label;
+              }}
+              defaultValue={''} 
+          />
+        </View>
+
+        <FlatList
+          data={users}
+          keyExtractor={(item, index) => index.toString()}
+          renderItem={({ item }) => (
+            <View>
+              <Spacer size={5} horizontal={false}/>
+
+              <View style={styles.row}>
+                <ToggleSwitch
+                  onValueChange={() => handleSelectUser(item)}
+                />
+                <Spacer size={5} horizontal={true}/>
+                <XSmallText>{item.firstName} {item.lastName}</XSmallText>
+              </View>
+
+              <Spacer size={5} horizontal={false}/>
+            </View>
+          )}
+          />
+      </View>
+
+      <View style={styles.bottomButton}>
+        <BlueLargeButton title="Create New Split" onClick={createNewSplit} />
+      </View>
     </View>
   )
 }
@@ -166,9 +188,49 @@ export default function CreateNewSplitScreen({navigation}: CreateNewSplitScreenS
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    padding: 20, 
     justifyContent: 'center',
+    alignContent: 'center'
+  },
+  center:{
+    justifyContent: 'space-between',
     alignItems: 'center',
-    padding: 20
+    alignContent: 'center'
+  },
+  back:{
+    marginTop: 15, 
+    marginBottom: 15,
+    flexDirection: 'row',
+    alignContent: 'flex-start'
+  },
+  title:{
+    marginTop: 15, 
+    marginBottom: 30,
+    flexDirection: 'column',
+    alignItems: 'center'
+  },
+  centerItem:{
+    marginTop: 15, 
+    marginBottom: 15,
+    flexDirection: 'column',
+    alignItems: 'center'
+  },
+  bottomButton:{
+    marginTop: 75, 
+    marginBottom: 15,
+    flexDirection: 'column',
+    alignItems: 'center'
+  },
+  row:{
+    flexDirection: 'row', 
+    alignContent: 'center'
+  },
+  marginTopBottom: {
+    marginBottom: 20,
+    marginTop: 20,
+  },
+  listContainer: {
+    width: '100%', 
   },
   input: {
     borderWidth: 1,
@@ -183,18 +245,6 @@ const styles = StyleSheet.create({
     paddingTop: 5,
     paddingBottom: 5
 },
-  currencyPicker: {
-    backgroundColor: 'rgba(217, 217, 217, 0.39)',
-    width: 324, 
-    height: 48,
-    borderRadius: 20,
-    paddingLeft: 20,
-    marginBottom: 21,
-  },
-  xSmallText: {
-    marginBottom: 10,
-    fontWeight: 'bold',
-  },
   userItem: {
     flexDirection: 'row',
     alignItems: 'center'
@@ -205,23 +255,19 @@ const styles = StyleSheet.create({
   styleButtonsContainer: {
     flexDirection: 'row',
     justifyContent: 'space-around',
-    marginBottom: 20,
+    marginBottom: 30,
+    marginTop: 20,
   },
   selectedStyleButton: {
-    shadowColor: '#000',
-    shadowOffset: { width: 2, height: 2 },
-    shadowOpacity: 0.5,
-    shadowRadius: 6,
-    elevation: 4,
+    borderColor: '#2c78f2',
   },
   styleButton: {
-    width: 30,
-    height: 30,
-    borderRadius: 15,
+    width: 40,
+    height: 40,
+    borderRadius: 40,
+    borderWidth: 5,
+    borderColor: '#f2f2f2',
     marginHorizontal: 10,
-  },
-  listContainer: {
-    width: '100%', 
   },
   styleButtonRed: {
     backgroundColor: '#FF91E0',
