@@ -1,33 +1,30 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import {View, StyleSheet} from 'react-native'
 
 import { colors } from '../utils/colors'
 import { MediumText, MediumTextWhite } from './Text/MediumText';
 import { XSmallText, XSmallTextWhite } from './Text/XSmallText';
 import { PaymentType, UserType } from '../utils/types';
-
-
-
-
-
+import { FIREBASE_AUTH } from '../../firebaseConfig';
 
 type paymentProps = {
     id: string
     payment: PaymentType; 
     partOfPayment: boolean;
     currency: string; //get from Split
-    creatorData?: UserType
+    creatorData?: UserType;
 }
 
-
-//TODO: finn ut hvordan man får userID til innlogget bruker
-//Bruk så dette til å sjekke denne mot props.creator, og userID-ene i props.participants ... Legg til "Your part is"
-
-//Lagde brukeren oppgjøret, skal kortet være lysegrått. 
-
 const Payment = (props: paymentProps) => {
+
     const id = props.id
-    
+  
+    const participantsMap = props.payment.participants instanceof Map
+    ? props.payment.participants
+    : new Map(Object.entries(props.payment.participants || {})); 
+
+    const email = FIREBASE_AUTH.currentUser?.email;
+    const share = participantsMap.get(email as string)
     
     return (
         ((props.partOfPayment) ?
@@ -37,7 +34,7 @@ const Payment = (props: paymentProps) => {
             <XSmallTextWhite>{`${props.payment.title}`}</XSmallTextWhite>
             <XSmallTextWhite>{`${props.creatorData?.firstName} ${props.creatorData?.lastName}`}</XSmallTextWhite>
 
-            <XSmallTextWhite>{`Your share is x ${props.currency}`}</XSmallTextWhite>
+            <XSmallTextWhite>{`Your share is ${share} ${props.currency}`}</XSmallTextWhite>
         </View>) 
         :
         (<View id={id} style={styles.greyPaymentLeft}>
@@ -45,7 +42,7 @@ const Payment = (props: paymentProps) => {
             <XSmallText>{`${props.payment.title}`}</XSmallText>
             <XSmallText>{`${props.creatorData?.firstName} ${props.creatorData?.lastName}`}</XSmallText>
 
-            <XSmallText>{'Your share is ' }</XSmallText>
+            <XSmallText>{`Your share is ${share} ${props.currency}`}</XSmallText>
         </View>)) 
   )
 }

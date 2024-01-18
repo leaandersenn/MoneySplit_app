@@ -88,6 +88,9 @@ import { RootStackParamList } from '../../screens/HomeScreen';
             email: data.user.email,
             firstName: name,
             lastName: lastName,
+            payments: [],
+            splits: []
+
           }, { merge: true }); 
         }
         console.log("sjekk databasen");
