@@ -17,24 +17,24 @@ import GitHubLoginButton from '../components/Buttons/GitHubLoginButton';
 import { RootStackParamList } from './HomeScreen';
 
 
-  type LogInScreenNavigationProp = NativeStackNavigationProp<RootStackParamList, 'LogIn'>;
+type LogInScreenNavigationProp = NativeStackNavigationProp<RootStackParamList, 'LogIn'>;
   
-  type LogInProps = {
-    navigation: LogInScreenNavigationProp;
-  };
+type LogInProps = {
+  navigation: LogInScreenNavigationProp;
+};
 
 export default function LogInScreen({ navigation }: LogInProps): JSX.Element  {
 
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-    const { signInUser, forgotPassword, logoutUser } = useUserContext();
+    const { signInUser, forgotPassword } = useUserContext();
     const onSubmit = async () => {
         try {
             if (email && password) {
-            console.log("Email" + email + "prøver å logge inn")
+            console.log("LogInScreen: Prøver å logge inn bruker med Email" + email)
             await signInUser({email, password})
                 .then(() => navigation.navigate('Home'));
-            console.log("her er brukeren" + FIREBASE_AUTH.currentUser?.email)
+            console.log("LogInScreen: Current users email: " + FIREBASE_AUTH.currentUser?.email)
         } 
         } catch (error) {
         console.log(error);
@@ -55,14 +55,35 @@ export default function LogInScreen({ navigation }: LogInProps): JSX.Element  {
                 <LargeText children={"MoneySplit"} />
                 <MediumText children={"Sign In"} />
             </View>
-           
-            <TextInputField value={email} placeholder='Email' onChangeText={setEmail} />
-            <PasswordInput  value={password} placeholder='Password' onChangeText={setPassword} />
-            <Spacer size={24} horizontal={false}/>
-            <ForgotPasswordButton title={"Forgot Password?"} onClick={forgotPasswordHandler} />
-            <GreenLargeButton title='Sign In' onClick={onSubmit} />
+
+            <TextInputField 
+                value={email} 
+                placeholder='Email' 
+                onChangeText={setEmail} 
+            />
+            <PasswordInput  
+                value={password} 
+                placeholder='Password' 
+                onChangeText={setPassword} 
+            />
+            <Spacer 
+                size={24} 
+                horizontal={false}
+            />
+            <ForgotPasswordButton 
+                title={"Forgot Password?"} 
+                onClick={forgotPasswordHandler} 
+            />
+            <GreenLargeButton 
+                title='Sign In' 
+                onClick={onSubmit} 
+            />
+
             <DividerWithText title={"Or login with"}/>
-            <GitHubLoginButton navigation={navigation}/>
+
+            <GitHubLoginButton 
+                navigation={navigation}
+            />
             
             <View style={styles.registeredText}>
                 <XSmallText children={"Don´t have an account? "} />
