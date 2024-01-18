@@ -19,6 +19,7 @@ export default function SignOutButton(props: SignoutProps) {
 const styles = StyleSheet.create({
     button: {
         backgroundColor: '#43B05C',
+        marginLeft: 20,
         width: 124, 
         height: 48,
         justifyContent: 'center',
