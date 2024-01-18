@@ -17,9 +17,8 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import Spacer from '../components/Spacer';
 
 // -------- TODODS -------- //
-// Connect from Split View to set "Add Payment" in context of a Split and add it to the header
-// If currency is not selected, the currency of the split is used
-// Currency converter, fetch Splits currency and convert accordingly
+//Add in new payment to users as well as adding them to the splits.
+//Add in each participants share.
 
 type NewPaymentRouteProp = RouteProp<RootStackParamList, 'NewPayment'>
 type SplitScreenNavigationProp = NativeStackNavigationProp<RootStackParamList, 'NewPayment'>
@@ -33,9 +32,11 @@ export default function NewPaymentScreen({route, navigation}: NewPaymentScreenPr
     const [amount, setAmount] = useState('');
     const [description, setDescription] = useState('');
     const [selectedCurrency, setSelectedCurrency] = useState<string | null>(null)
-    const [participants, setParticipants] = useState<Map<string, number>>()
-
+    const [participants, setParticipants] = useState<Map<string, number>>(new Map)
+    const [user, setUser] = useState<string[]>([]);
+    
     console.log(FIREBASE_AUTH.currentUser?.email)
+
     const { split } = route.params
     const { users } = route.params
     const { userId } = route.params
@@ -46,19 +47,10 @@ export default function NewPaymentScreen({route, navigation}: NewPaymentScreenPr
         { label: 'EUR', value: 'EUR' },
         { label: 'GBP', value: 'GBP' }
       ]
-
-
-
+    
     const handleSelectUser = (userEmail: string) => {
-        const newParticipants = new Map(participants);
-        if (newParticipants.has(userEmail)) {
-            newParticipants.delete(userEmail);
-        } else {
-            newParticipants.set(userEmail, 11); // should first set the number automatically (equal divison between all selected participants). The user should be able to edit this.
-        }
-        setParticipants(newParticipants);
-        //Object.fromEntries(newParticipants)
-    };
+        user.push(userEmail)
+    }
     
 
     const handleCreatePayment = async () => {
@@ -68,6 +60,16 @@ export default function NewPaymentScreen({route, navigation}: NewPaymentScreenPr
         }
         try {
             console.log('NewPaymentScreen: participants' + participants)
+            const length = user.length
+            
+
+            const cost = parseFloat(amount)
+            const yourShare = cost / length
+            console.log("yourshare" + yourShare)
+  
+            user.forEach( u => {
+              participants.set(u, yourShare)}
+            )
           const paymentData = {
             amount: parseFloat(amount),
             currency: selectedCurrency,
@@ -75,9 +77,9 @@ export default function NewPaymentScreen({route, navigation}: NewPaymentScreenPr
             dateCreated: new Date(),
             creator: userId,
             relatedSplit: Object.freeze(split.id),
-            participants: Object.fromEntries(participants!)
+            participants: Object.fromEntries(participants),
           };
-    
+           
           const newPaymentRef = await addDoc(collection(db, 'Payments'), paymentData)
           console.log('newPaymentRef: ' )
           console.log(newPaymentRef.path)
