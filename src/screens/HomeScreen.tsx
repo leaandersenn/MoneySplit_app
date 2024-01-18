@@ -134,10 +134,16 @@ const HomeScreen = ({navigation}: HomeScreenProps) => {
                 />)
             })
             )
-            : (<></>)
+            : 
+            (
+            <></>
+            )
             }
       </ScrollView>
-      <SignOutButton onClick={handleSignOut}/>
+
+      <View style={styles.bottomButton}>
+        <SignOutButton onClick={handleSignOut}/>
+      </View>
       <Spacer size={20} horizontal={false}/>
       </>
     </View>
@@ -177,5 +183,11 @@ const styles = StyleSheet.create({
       borderRadius: 100,
       justifyContent: 'center',
       alignItems: 'center',
+    }, 
+    bottomButton:{
+      padding: 15,
+      marginBottom: 15,
+      flexDirection: 'column',
+      alignItems: 'center', 
     }
   });

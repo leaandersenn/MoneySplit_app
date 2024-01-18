@@ -131,7 +131,6 @@ const SplitScreen = ({route, navigation }: SplitScreenProps) => {
                       return (
                           <Payment 
                               id={payment.id}
-                              partOfPayment={false} 
                               currency={split.currency}
                               payment={payment} 
                               creatorData={userData}
@@ -173,7 +172,6 @@ const styles = StyleSheet.create({
         alignContent: 'flex-start'
     }, 
     bottomButton:{
-      
       padding: 15,
       marginBottom: 15,
       flexDirection: 'column',
