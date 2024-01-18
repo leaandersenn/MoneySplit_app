@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { PaymentType, UserType } from '../utils/types';
-import { onSnapshot, doc, DocumentReference, getDoc } from 'firebase/firestore';
+import { onSnapshot, doc, DocumentReference, getDoc, collection, query, getDocs, where } from 'firebase/firestore';
 import { StyleSheet, View, ScrollView, SafeAreaView, ActivityIndicator } from 'react-native';
 import Payment from '../components/Payment';
 import { RouteProp } from '@react-navigation/native';
@@ -11,8 +11,8 @@ import Spacer from '../components/Spacer';
 import { MediumText } from '../components/Text/MediumText';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { BlueLargeButton } from '../components/Buttons/BlueLargeButton';
-import { SmallText } from '../components/Text/SmallText';
-import { db } from '../../firebaseConfig';
+import { FIREBASE_AUTH, db } from '../../firebaseConfig';
+
 
 type SplitScreenRouteProp = RouteProp<RootStackParamList, 'Split'>
 type SplitScreenNavigationProp = NativeStackNavigationProp<RootStackParamList, 'Split'>
@@ -22,15 +22,14 @@ type SplitScreenProps = {
   navigation: SplitScreenNavigationProp
 }
 
-
-const SplitScreen = ({route, navigation}: SplitScreenProps) => {
+const SplitScreen = ({route, navigation }: SplitScreenProps) => {
     const [payments, setPayments] = useState<PaymentType[]>([])
     const [users, setUsers] = useState<UserType[]>([])
     const [loading, setLoading] = useState(true)
     const [usersMap, setUsersMap] = useState<Map<string, UserType>>(new Map);
+    const [docRef, setDocRef] = useState('');
 
     const { split } = route.params
-
 
     useEffect(() => {
         const fetchData = async () => {
@@ -38,7 +37,7 @@ const SplitScreen = ({route, navigation}: SplitScreenProps) => {
                 const newUsersMap = new Map<string, UserType>();
                 const items = []
                 for (const userId of split.users) {
-                    const docRef = doc(db, "Users", userId); // Replace with correct path if necessary
+                    const docRef = doc(db, "Users", userId); 
                     const docSnapshot = await getDoc(docRef);
                     if (docSnapshot.exists()) {
                         const userData = { ...docSnapshot.data(), id: docSnapshot.id } as UserType;
@@ -81,7 +80,6 @@ const SplitScreen = ({route, navigation}: SplitScreenProps) => {
                     fetchPayments(splitData.paymentsID)
                 }
             });
-    
             return () => unsubscribe();
         } else {
             console.error('split.id is not a DocumentReference:', split.id)
@@ -90,29 +88,29 @@ const SplitScreen = ({route, navigation}: SplitScreenProps) => {
     
 
     useEffect(() => {
-        const fetchData = async () => {
-            try {
-                const items = [];
-                for (const docRef of split.users) {
-                    const docSnapshot = await getDoc(docRef);
-                    if (docSnapshot.exists()) {
-                        items.push({ ...docSnapshot.data(), id: docSnapshot.id } as UserType);
-                    }
-                }
-                setUsers(items);    
-                console.log(items);
-            } catch (error) {
-                console.error("Error fetching data: ", error);
+        const fetchUserDocRef = async () => {
+          const userEmail = FIREBASE_AUTH.currentUser?.email;
+          if (!userEmail) {
+            console.log('No user email found');
+            return null;
+          }
+          const usersRef = collection(db, 'Users');
+          const q = query(usersRef, where('email', '==', userEmail));
+          try {
+            const querySnapshot = await getDocs(q);
+            if (!querySnapshot.empty) {
+              const userDocRef = querySnapshot.docs[0].id;
+              console.log(`Document reference for ${userEmail}:`, userDocRef)
+              setDocRef(userDocRef)
+            } else {
+              console.log(`No document found for ${userEmail}`)
             }
+          } catch (error) {
+            console.error("Error fetching user document reference:", error)
+          }
         };
-    
-        fetchData();
-    }, []); 
-
-
-    const findUserByCreatorRef = (creatorRef: DocumentReference): UserType | undefined => {
-        return users.find(user => creatorRef && user.id === creatorRef.id);
-    };
+        fetchUserDocRef()
+      }, []);
 
   return (
     <SafeAreaView style={styles.white}>
@@ -125,6 +123,10 @@ const SplitScreen = ({route, navigation}: SplitScreenProps) => {
         {loading ? 
           <ActivityIndicator style={styles.loading} size="large" color="#7aeb5e"/>
           : payments.map((payment) => {
+
+              if(payments.length==0){
+                return
+              } else {
                     const userData = usersMap.get(payment.creator)
                       return (
                           <Payment 
@@ -135,12 +137,13 @@ const SplitScreen = ({route, navigation}: SplitScreenProps) => {
                               creatorData={userData}
                           />
                       );
-                  })
+                  }})
             }
         </ScrollView>
-        <View>
-            <BlueLargeButton title={"Add payment"} onClick={() => navigation.navigate('NewPayment', {split: split, users: users})}/>
-        </View>
+        <BlueLargeButton 
+            title={"Add payment"} 
+            onClick={() => navigation.navigate('NewPayment', {split: split, users: users, userId: docRef})}
+        />
     </SafeAreaView>
   )
 }
@@ -170,5 +173,7 @@ const styles = StyleSheet.create({
       }
   });
 
-export default SplitScreen
 
+
+
+export default SplitScreen
