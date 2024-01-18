@@ -27,6 +27,7 @@
       <dict>
         <key>CFBundleURLSchemes</key>
         <array>
+          <string>moneysplit</string>
           <string>com.bendingspoons.amk.moneysplit</string>
         </array>
       </dict>

@@ -1,83 +1,99 @@
 import React, { useState } from 'react';
-import { StyleSheet, View } from 'react-native';
+import { Button, StyleSheet, View, Text, useColorScheme} from 'react-native';
 import { LargeText } from '../components/Text/LargeText';
-import {signInWithEmailAndPassword } from "firebase/auth";
 import { FIREBASE_AUTH } from '../../firebaseConfig';
 import { MediumText } from '../components/Text/MediumText';
 import { GreenLargeButton } from '../components/Buttons/GreenLargeButton';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { XSmallText } from '../components/Text/XSmallText';
 import { SignInButton } from '../components/Buttons/SignInButton';
-
 import { ForgotPasswordButton } from '../components/Buttons/ForgotPasswordButton';
 import DividerWithText from '../components/Divider';
 import Spacer from '../components/Spacer';
 import TextInputField from '../components/InputFields/TextInputField';
 import PasswordInput from '../components/InputFields/PasswordInput';
+import { useUserContext } from '../components/Context/userContext';
+import GitHubLoginButton from '../components/Buttons/GitHubLoginButton';
+import { RootStackParamList } from './HomeScreen';
 
-type RootStackParamList = {
-    LogIn: undefined;
-    SignUp: undefined;
-  };
-  
-  type LogInScreenNavigationProp = NativeStackNavigationProp<RootStackParamList, 'LogIn'>;
-  
-  type Props = {
-    navigation: LogInScreenNavigationProp;
-  };
 
-export default function LogInScreen({ navigation}: Props) {
+type LogInScreenNavigationProp = NativeStackNavigationProp<RootStackParamList, 'LogIn'>;
+  
+type LogInProps = {
+  navigation: LogInScreenNavigationProp;
+};
+
+export default function LogInScreen({ navigation }: LogInProps): JSX.Element  {
 
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-  
-    const auth = FIREBASE_AUTH;
-
-    const signIn = async () => {
+    const { signInUser, forgotPassword } = useUserContext();
+    const onSubmit = async () => {
         try {
-            const response = await signInWithEmailAndPassword(auth, email, password);
-            console.log(response);
+            if (email && password) {
+            console.log("LogInScreen: Prøver å logge inn bruker med Email" + email)
+            await signInUser({email, password})
+                .then(() => navigation.navigate('Home'));
+            console.log("LogInScreen: Current users email: " + FIREBASE_AUTH.currentUser?.email)
+        } 
         } catch (error) {
-            console.log(error);
-            alert('Email or password is wrong');
-    }
-}
+        console.log(error);
+        alert('Sign up failed');
+        }
+    };
 
-    const forgotPassword = () => {
-        console.log("Forgot password")
-        /* Handle forgot password */
-    }
-  
+    const forgotPasswordHandler = async () => {
+        if (email)
+        await forgotPassword(email).then(() => {
+            setEmail("");
+        });
+    };
+
     return (
         <View style={styles.container}>
             <View style={styles.topText}>
                 <LargeText children={"MoneySplit"} />
                 <MediumText children={"Sign In"} />
             </View>
-           
-            <TextInputField value={email} placeholder='Email' onChangeText={setEmail} />
-            <PasswordInput  value={password} placeholder='Password' onChangeText={setPassword} />
-            <Spacer size={24} horizontal={false}/>
-           
-            <View style={styles.rememberForgot}>
-                <XSmallText children={"Remember me"}/>
-                <Spacer size={14} horizontal={true} />
-                <ForgotPasswordButton title={"Forgot Password?"} onClick={forgotPassword} />  
-            </View>
-            
-            <GreenLargeButton title='Sign In' onClick={signIn} />
+
+            <TextInputField 
+                value={email} 
+                placeholder='Email' 
+                onChangeText={setEmail} 
+            />
+            <PasswordInput  
+                value={password} 
+                placeholder='Password' 
+                onChangeText={setPassword} 
+            />
+            <Spacer 
+                size={24} 
+                horizontal={false}
+            />
+            <ForgotPasswordButton 
+                title={"Forgot Password?"} 
+                onClick={forgotPasswordHandler} 
+            />
+            <GreenLargeButton 
+                title='Sign In' 
+                onClick={onSubmit} 
+            />
+
             <DividerWithText title={"Or login with"}/>
 
-            {/* TODO: ADD in Google Component*/}
-            <GreenLargeButton title='Log In with Google' onClick={signIn} />
-
+            <GitHubLoginButton 
+                navigation={navigation}
+            />
+            
             <View style={styles.registeredText}>
                 <XSmallText children={"Don´t have an account? "} />
-                <SignInButton title={"Sign Up"} onClick={() => navigation.navigate('SignUp')} />
-            </View>
+                <SignInButton title={"Sign Up"} onClick={() => navigation.navigate('SignUp')} />           
         </View>
+    </View>
+   
     )
 };
+
 
 const styles = StyleSheet.create({
     container: {
@@ -99,6 +115,9 @@ const styles = StyleSheet.create({
     topText: {
         marginBottom: 56,
         gap: 36,
+        alignItems: 'center'
+    },
+    profile: {
         alignItems: 'center'
     }
 });

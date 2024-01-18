@@ -1,67 +1,176 @@
 import React, { useEffect, useState } from 'react'
-import { PaymentType } from '../utils/types';
-import { DocumentSnapshot, collection, getDocs } from 'firebase/firestore';
-import { db } from '../../firebaseConfig';
-import { StyleSheet, View, ScrollView } from 'react-native';
+import { PaymentType, UserType } from '../utils/types';
+import { onSnapshot, doc, DocumentReference, getDoc, collection, query, getDocs, where } from 'firebase/firestore';
+import { StyleSheet, View, ScrollView, SafeAreaView, ActivityIndicator } from 'react-native';
 import Payment from '../components/Payment';
+import { RouteProp } from '@react-navigation/native';
+import BackButton from '../components/Buttons/BackButton';
+import { RootStackParamList } from './HomeScreen';
+import { colors } from '../utils/colors';
+import Spacer from '../components/Spacer';
+import { MediumText } from '../components/Text/MediumText';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { BlueLargeButton } from '../components/Buttons/BlueLargeButton';
+import { FIREBASE_AUTH, db } from '../../firebaseConfig';
 
 
+type SplitScreenRouteProp = RouteProp<RootStackParamList, 'Split'>
+type SplitScreenNavigationProp = NativeStackNavigationProp<RootStackParamList, 'Split'>
 
-const SplitScreen = () => {
-    const [data, setData] = useState<PaymentType[]>([]);
+type SplitScreenProps = {
+  route: SplitScreenRouteProp
+  navigation: SplitScreenNavigationProp
+}
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const payments = collection(db, 'Payments');
-        const response = await getDocs(payments);
-        console.log(response)
-        const items = response.docs.map((doc: DocumentSnapshot) => ({...doc.data(), id: doc.id} as PaymentType));
-        setData(items)
-        console.log(items)
+const SplitScreen = ({route, navigation }: SplitScreenProps) => {
+    const [payments, setPayments] = useState<PaymentType[]>([])
+    const [users, setUsers] = useState<UserType[]>([])
+    const [loading, setLoading] = useState(true)
+    const [usersMap, setUsersMap] = useState<Map<string, UserType>>(new Map);
+    const [docRef, setDocRef] = useState('');
 
-      } catch (error) {
-        console.error("Error fetching data: ", error);
-      }
-    };
+    const { split } = route.params
 
-    fetchData();
-  }, []); 
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const newUsersMap = new Map<string, UserType>();
+                const items = []
+                for (const userId of split.users) {
+                    const docRef = doc(db, "Users", userId); 
+                    const docSnapshot = await getDoc(docRef);
+                    if (docSnapshot.exists()) {
+                        const userData = { ...docSnapshot.data(), id: docSnapshot.id } as UserType;
+                        items.push(userData);
+                        newUsersMap.set(docSnapshot.id, userData);
+                    }
+                }
+                setUsersMap(newUsersMap);
+                setUsers(items);
+            } catch (error) {
+                console.error("Error fetching data: ", error);
+            }
+        };
+    
+        fetchData();
+    }, []);
 
+
+    useEffect(() => {
+        const fetchPayments = async (paymentsID: DocumentReference[]) => {
+            try {
+                const paymentsPromises = paymentsID.map(paymentRef => getDoc(paymentRef))
+                const paymentDocs = await Promise.all(paymentsPromises)
+                const paymentItems = paymentDocs.map(doc => ({ ...doc.data(), id: doc.id } as PaymentType))
+                setPayments(paymentItems)
+
+                console.log('paymentItems')
+                console.log(paymentItems)
+            } catch (error) {
+                console.error("Error fetching payments: ", error)
+            }finally{
+                setLoading(false)
+              }
+        };
+    
+        if (split.id instanceof DocumentReference) {
+            const unsubscribe = onSnapshot(split.id, (docSnapshot) => {
+                if (docSnapshot.exists()) {
+                    const splitData = docSnapshot.data()
+                    fetchPayments(splitData.paymentsID)
+                }
+            });
+            return () => unsubscribe();
+        } else {
+            console.error('split.id is not a DocumentReference:', split.id)
+        }
+    }, []); 
+    
+
+    useEffect(() => {
+        const fetchUserDocRef = async () => {
+          const userEmail = FIREBASE_AUTH.currentUser?.email;
+          if (!userEmail) {
+            console.log('No user email found');
+            return null;
+          }
+          const usersRef = collection(db, 'Users');
+          const q = query(usersRef, where('email', '==', userEmail));
+          try {
+            const querySnapshot = await getDocs(q);
+            if (!querySnapshot.empty) {
+              const userDocRef = querySnapshot.docs[0].id;
+              console.log(`Document reference for ${userEmail}:`, userDocRef)
+              setDocRef(userDocRef)
+            } else {
+              console.log(`No document found for ${userEmail}`)
+            }
+          } catch (error) {
+            console.error("Error fetching user document reference:", error)
+          }
+        };
+        fetchUserDocRef()
+      }, []);
 
   return (
-    <View>
-        <ScrollView>
-        {Object.entries(data).map((e) => {
-            return(
-            <Payment 
-            id={Object(e[0])}
-            partOfPayment={false} 
-            yourPartIs={Object.keys(e[1].participants)[0]} 
-            payment={{
-                id: Object(e[0]),
-                creator: Object(e[1].creator),
-                sumOfPayment: Object(e[1].sumOfPayment),
-                currency: Object(e[1].currency),
-                title: Object(e[1].title),
-                participants: Object(e[1].participants),
-                relatedSplitsId: Object(e[1].relatedSplitsId)
-            }} 
-            />)
-            })}
+    <SafeAreaView style={styles.white}>
+        <View style={styles.title}>
+            <BackButton color={colors.tertiary}/>
+            <Spacer horizontal={true} size={110}></Spacer>
+            <MediumText>{split.name}</MediumText>
+        </View>
+        <ScrollView contentContainerStyle={styles.scrollView}>
+        {loading ? 
+          <ActivityIndicator style={styles.loading} size="large" color="#7aeb5e"/>
+          : payments.map((payment) => {
+
+              if(payments.length==0){
+                return
+              } else {
+                    const userData = usersMap.get(payment.creator)
+                      return (
+                          <Payment 
+                              id={payment.id}
+                              partOfPayment={false} 
+                              currency={split.currency}
+                              payment={payment} 
+                              creatorData={userData}
+                          />
+                      );
+                  }})
+            }
         </ScrollView>
-    </View>
+        <BlueLargeButton 
+            title={"Add payment"} 
+            onClick={() => navigation.navigate('NewPayment', {split: split, users: users, userId: docRef})}
+        />
+    </SafeAreaView>
   )
 }
 
 
 const styles = StyleSheet.create({
-    container: {
-      flex: 1,
-      backgroundColor: '#ffff',
-      alignItems: 'center',
-      justifyContent: 'center',
+    white: {
+        flex: 1,
+        backgroundColor: '#ffff',
     },
+    scrollView: {
+        flexGrow: 2,
+        alignItems: 'center',
+        paddingTop: 10, 
+    },
+    loading: {
+      marginTop: 120,
+      alignItems: 'center'
+    },
+    title:{
+        marginTop: 15, 
+        marginLeft: 20,
+        marginBottom: 15,
+        flexDirection: 'row',
+        justifyContent: 'flex-start',
+        alignContent: 'flex-start'
+      }
   });
 
 
