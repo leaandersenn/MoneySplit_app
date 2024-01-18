@@ -1,33 +1,36 @@
 import React, { useEffect, useState } from 'react'
-import { Text, View, TextInput, Button, StyleSheet, FlatList, TouchableOpacity } from 'react-native'
-import { CheckBox } from 'react-native-elements'
-import RNPickerSelect from 'react-native-picker-select'
-
+import { View, StyleSheet, FlatList, TouchableOpacity } from 'react-native'
 import { DocumentSnapshot, collection, getDocs, addDoc, updateDoc, arrayUnion, doc } from 'firebase/firestore'
 import { db } from '../../firebaseConfig'
-
 import { UserType } from '../utils/types'
-
 import { XSmallText } from '../components/Text/XSmallText'
 import TextInputField from '../components/InputFields/TextInputField'
 import { BlueLargeButton } from '../components/Buttons/BlueLargeButton'
+import SelectDropdown from 'react-native-select-dropdown'
+import ToggleSwitch from '../components/ToggleSwitch'
+import { RootStackParamList } from './HomeScreen'
+import { NativeStackNavigationProp } from '@react-navigation/native-stack'
 
-export default function CreateNewSplitScreen() {
+//TODO: communication w/ Exchange API
+type CreateNewSplitScreenNavigationProp = NativeStackNavigationProp<RootStackParamList, 'CreateNewSplitScreen'>
+
+type CreateNewSplitScreenScreenProps = {
+  navigation: CreateNewSplitScreenNavigationProp
+}
+export default function CreateNewSplitScreen({navigation}: CreateNewSplitScreenScreenProps) {
   const [splitName, setSplitName] = useState<string>('')
   const [selectedCurrency, setSelectedCurrency] = useState<string | null>(null)
-  const [searchQuery, setSearchQuery] = useState<string>('')
   
   const [users, setUsers] = useState<UserType[]>([])
   const [selectedUsers, setSelectedUsers] = useState<UserType[]>([])
-  const [filteredUsers, setFilteredUsers] = useState<UserType[]>([])
+  const [selectedColor, setSelectedColor] = useState<string | null>(null)
 
-  const [selectedColor, setSelectedColor] = useState<string | null>(null);
 
   const handleSelectColor = (color: string) => {
     setSelectedColor(color);
   };
 
-  const currencyOptions = [ //TODO: communication w/ Exchange API
+  const currencyOptions = [ 
     { label: 'NOK', value: 'NOK' },
     { label: 'USD', value: 'USD' },
     { label: 'EUR', value: 'EUR' },
@@ -45,43 +48,34 @@ export default function CreateNewSplitScreen() {
     fetchUsers()
   }, [])
 
+
   const handleSelectUser = (user: UserType) => {
     if (selectedUsers.some(selectedUser => selectedUser.id === user.id)) {
-      setSelectedUsers(selectedUsers.filter(u => u.id !== user.id));
+      setSelectedUsers(selectedUsers.filter(u => u.id !== user.id))
     } else {
-      setSelectedUsers([...selectedUsers, user]);
+      setSelectedUsers([...selectedUsers, user])
     }
   };
 
-  useEffect(() => {
-    // Filter users based on search query
-    const filtered = users.filter(user =>
-    user.firstName.toLowerCase().startsWith(searchQuery.toLowerCase()) ||
-    user.lastName.toLowerCase().startsWith(searchQuery.toLowerCase())
-    );
-    setFilteredUsers(filtered);
-    console.log('Filtered Users:', filtered); // Add this line to check filtered users
-    }, [searchQuery, users]);
-
-  const isUserSelected = (user: UserType) => {
-    return selectedUsers.some(selectedUser => selectedUser === user)
-  }
-
   const createNewSplit = async () => {
-    try {
+    if (!selectedColor || !selectedCurrency || !splitName || !selectedColor ||  selectedUsers.length<=1) {
+      alert('Please fill all the fields')
+      return;
+    }
 
-      const userRefs = selectedUsers.map(user => doc(db, 'Users', user.id));
+    try {
+      const userIDs = selectedUsers.map(user => user.id);
 
       const splitData = {
         name: splitName,
         creationDate: new Date(),
         currency: selectedCurrency,
         cardColor: selectedColor,
-        users: userRefs, // Store user references,
+        users: userIDs, 
+        paymentsID: []
       };
       const docRef = await addDoc(collection(db, 'Splits'), splitData);
 
-      // Update each selected user's document in the Users collection
       for (const user of selectedUsers) {
         const userDocRef = doc(db, 'Users', user.id);
         await updateDoc(userDocRef, {
@@ -89,9 +83,12 @@ export default function CreateNewSplitScreen() {
         });
       }
       alert('Split created successfully');
+
+
+      navigation.navigate('Home');
     } catch (error) {
       console.error('Error creating split:', error);
-      alert('Split creation failed');
+      alert('Split creation failed')
     }
   };
 
@@ -133,38 +130,35 @@ export default function CreateNewSplitScreen() {
       />
 
       <XSmallText>Select a currency...</XSmallText>
-      <RNPickerSelect
-        style={{ inputIOS: styles.currencyPicker }}
-        onValueChange={(value) => { setSelectedCurrency(value) }}
-        items={currencyOptions}
-        placeholder={{ label: 'Currency', value: null }}
-        value={selectedCurrency}
-      />
-
-      <XSmallText>Select users to split with...</XSmallText>
-      <TextInputField
-        placeholder="Search Users"
-        value={searchQuery}
-        onChangeText={setSearchQuery}
+      <SelectDropdown
+          data={currencyOptions}
+          onSelect={(selectedItem, index) => {
+              console.log(selectedItem, index);
+              setSelectedCurrency(selectedItem.value);
+          }}
+          buttonTextAfterSelection={(selectedItem, index) => {
+              return selectedItem.label;
+          }}
+          rowTextForSelection={(item, index) => {
+              return item.label;
+          }}
+          defaultValue={''} 
       />
 
       <FlatList
-        data={filteredUsers}
+        data={users}
         keyExtractor={(item, index) => index.toString()}
         renderItem={({ item }) => (
           <View style={styles.userItem}>
-            <CheckBox
-              checked={isUserSelected(item)}
-              onPress={() => handleSelectUser(item)}
+            <ToggleSwitch
+              onValueChange={() => handleSelectUser(item)}
             />
             <XSmallText>{item.firstName} {item.lastName}</XSmallText>
           </View>
         )}
-      />
+        />
 
-    <BlueLargeButton title="Create New Split" onClick={createNewSplit} />
-    {/* <Button title="Create New Split" onPress={createNewSplit} /> */}
-
+      <BlueLargeButton title="Create New Split" onClick={createNewSplit} />
     </View>
   )
 }
@@ -176,7 +170,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     padding: 20
   },
-
   input: {
     borderWidth: 1,
     borderColor: 'gray',
@@ -184,7 +177,12 @@ const styles = StyleSheet.create({
     padding: 10,
     marginBottom: 20
   },
-
+  checkboxStyle: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingTop: 5,
+    paddingBottom: 5
+},
   currencyPicker: {
     backgroundColor: 'rgba(217, 217, 217, 0.39)',
     width: 324, 
@@ -193,50 +191,44 @@ const styles = StyleSheet.create({
     paddingLeft: 20,
     marginBottom: 21,
   },
-
   xSmallText: {
     marginBottom: 10,
     fontWeight: 'bold',
   },
-
   userItem: {
     flexDirection: 'row',
     alignItems: 'center'
   },
-
   selectedUser: {
     backgroundColor: '#e7f3fe'
   },
-
   styleButtonsContainer: {
     flexDirection: 'row',
     justifyContent: 'space-around',
     marginBottom: 20,
   },
-
   selectedStyleButton: {
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
+    shadowOffset: { width: 2, height: 2 },
     shadowOpacity: 0.5,
-    shadowRadius: 2,
+    shadowRadius: 6,
     elevation: 4,
   },
-
   styleButton: {
     width: 30,
     height: 30,
     borderRadius: 15,
     marginHorizontal: 10,
   },
-
+  listContainer: {
+    width: '100%', 
+  },
   styleButtonRed: {
     backgroundColor: '#FF91E0',
   },
-
   styleButtonGreen: {
     backgroundColor: '#43B05C',
   },
-
   styleButtonBlue: {
     backgroundColor: '#5BD4FA',
   },
