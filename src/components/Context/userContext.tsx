@@ -43,7 +43,7 @@ export const UserContextProvider = ({ children }: any) => {
   }, [initializing]);
 
   // Function to register a new user
-  const registerUser = async ({ email, password, firstName, lastName }: any) => {
+  const registerUser = async ({ email, password, firstName, lastName, payments, splits }: any) => {
     setLoading(true);
     try {
       console.log("Inne i registerUser");
@@ -54,9 +54,11 @@ export const UserContextProvider = ({ children }: any) => {
       );
       const authUser = userCredentials.user;
       await setDoc(doc(db, "Users", authUser.uid), {
-        email,
-        firstName,
-        lastName
+        email: email,
+        firstName: firstName,
+        lastName: lastName,
+        payments: payments,
+        splits: splits
       });
       console.log(authUser);
       console.log("sjekk databasen da HORE")

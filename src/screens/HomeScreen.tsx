@@ -97,9 +97,9 @@ const HomeScreen = ({navigation}: HomeScreenProps) => {
     const handleSignOut = async () => {
       const auth = getAuth();
       try {
-          await auth
-           .signOut()
+          await FIREBASE_AUTH.signOut()
            .then(() => navigation.navigate('LogIn'));
+           console.log("Etter sign out" +  FIREBASE_AUTH.currentUser?.email)
 
       } catch (error) {
           alert('Error signing out:');

@@ -27,15 +27,19 @@ export default function SignUpScreen( {navigation}: SignUpProps) {
     const [password, setPassword] = useState('');
     const { registerUser, logoutUser } = useUserContext();
 
+
+
     const onSubmit = async () => {
         try {
             if (email && password && name && lastName) {
-            await registerUser({email, password, name, lastName});
+            await registerUser({email, password, name, lastName });
             console.log("SignUpScreen: Signed up user: " + FIREBASE_AUTH.currentUser?.email)
             const userData = {
                 firstName: name,
                 lastName: lastName,
-                email: email.toLowerCase
+                email: email.toLowerCase,
+                payments: [],
+                splits: []
               }
               await addDoc(collection(db, 'Users'), userData);
             } 
