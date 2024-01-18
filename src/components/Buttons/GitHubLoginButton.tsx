@@ -85,8 +85,8 @@ import { RootStackParamList } from '../../screens/HomeScreen';
           const userDocRef = doc(db, 'Users', data.user.uid);
 
           await setDoc(userDocRef, {
-            mail: data.user.email,
-            name: name,
+            email: data.user.email,
+            firstName: name,
             lastName: lastName,
           }, { merge: true }); 
         }
