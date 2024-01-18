@@ -37,7 +37,7 @@ export default function SignUpScreen( {navigation}: SignUpProps) {
             const userData = {
                 firstName: name,
                 lastName: lastName,
-                email: email.toLowerCase,
+                email: email,
                 payments: [],
                 splits: []
               }
