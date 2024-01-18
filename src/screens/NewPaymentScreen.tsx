@@ -204,7 +204,7 @@ const styles = StyleSheet.create({
         alignItems: 'center'
       },
       bottomButton:{
-        marginTop: 75, 
+        marginTop: 20, 
         marginBottom: 15,
         flexDirection: 'column',
         alignItems: 'center'

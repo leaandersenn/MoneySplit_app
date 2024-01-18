@@ -39,7 +39,8 @@ const Payment = (props: paymentProps) => {
         (<View id={id} style={styles.greyPaymentLeft}>
             <MediumText>{`${props.payment.amount} ${props.currency}`}</MediumText>
             <XSmallText>{`${props.payment.title}`}</XSmallText>
-            <XSmallText>{`${props.creatorData?.firstName} ${props.creatorData?.lastName}`}</XSmallText>
+
+            <XSmallText>{`My payment`}</XSmallText>
         </View>) 
         :
         ((partOfPayment) ? 
@@ -87,7 +88,7 @@ const styles = StyleSheet.create({
         shadowOpacity: 0.5,
         shadowRadius: 1.5,
     },
-    greyPaymentLeft: {
+    greyPaymentRight: {
         flex: 1,
         flexDirection: 'column',
         alignItems: 'flex-start',
@@ -105,16 +106,16 @@ const styles = StyleSheet.create({
         shadowOpacity: 0.5,
         shadowRadius: 1.5,
     },
-    greyPaymentRight: {
+    greyPaymentLeft: {
         flex: 1,
         flexDirection: 'column',
         alignItems: 'flex-start',
         justifyContent: 'space-between',
         borderRadius: 10,
         backgroundColor: colors.graylight,
-        height: 125, 
-        minHeight: 125, 
-        maxHeight: 150,
+        height: 100, 
+        minHeight: 100, 
+        maxHeight: 125,
         width: 300, 
         padding: 12,
         margin: 8,
