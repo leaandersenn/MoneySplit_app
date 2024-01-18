@@ -32,6 +32,7 @@
     "react": "18.2.0",
     "react-native": "0.72.6",
     "react-native-picker-select": "^9.0.0",
+    "react-native-select-dropdown": "^3.4.0",
     "react-native-svg": "13.9.0",
     "react-native-vector-icons": "^10.0.3",
     "styled-components": "^6.1.6"
@@ -41,6 +42,7 @@
     "@testing-library/react-native": "^12.4.3",
     "@types/expo": "^33.0.1",
     "@types/jest": "^29.5.11",
+    "@types/jquery": "^3.5.29",
     "@types/react": "~18.2.14",
     "@types/react-native": "^0.73.0",
     "@types/react-native-vector-icons": "^6.4.18",
