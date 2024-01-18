@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
-import { Button, StyleSheet, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import { LargeText } from '../components/Text/LargeText';
-import { createUserWithEmailAndPassword } from "firebase/auth";
 import { FIREBASE_AUTH, db } from '../../firebaseConfig';
 import { MediumText } from '../components/Text/MediumText';
 import { GreenLargeButton } from '../components/Buttons/GreenLargeButton';
@@ -19,8 +18,6 @@ import { RootStackParamList } from './HomeScreen';
   type SignUpProps = {
     navigation: SignUpScreenNavigationProp;
   };
-  
-
 
 export default function SignUpScreen( {navigation}: SignUpProps) {
     
@@ -34,7 +31,7 @@ export default function SignUpScreen( {navigation}: SignUpProps) {
         try {
             if (email && password && name && lastName) {
             await registerUser({email, password, name, lastName});
-            console.log("Bruker email " + FIREBASE_AUTH.currentUser?.email)
+            console.log("SignUpScreen: Signed up user: " + FIREBASE_AUTH.currentUser?.email)
             const userData = {
                 firstName: name,
                 lastName: lastName,
@@ -49,15 +46,7 @@ export default function SignUpScreen( {navigation}: SignUpProps) {
             alert('Sign up failed');
         }
     }
-
-
-    const handleSignout = async () => {
-        await logoutUser();
-        console.log("User signed out");
-        console.log(FIREBASE_AUTH.currentUser + ": current user");
-    }
     
-
     return (
         <View style={styles.container}>
             <View style={styles.topText}>
@@ -68,16 +57,34 @@ export default function SignUpScreen( {navigation}: SignUpProps) {
                     <MediumText children={"Sign Up"} />
                 </View>
             </View>
-            <TextInputField value={name} placeholder='First name' onChangeText={setName}/>
-            <TextInputField value={lastName} placeholder='Last name' onChangeText={setLastName}/>
-            <TextInputField value={email} placeholder='Email' onChangeText={setEmail}/>
-            
-            <PasswordInput value={password} placeholder='Password' onChangeText={setPassword} />
-            <Spacer size={21} horizontal={false}/>
-            
-            <GreenLargeButton title='Sign Up' onClick={onSubmit}></GreenLargeButton>
-            <Button title='sign out' onPress={handleSignout} />
-
+            <TextInputField 
+                value={name} 
+                placeholder='First name' 
+                onChangeText={setName}
+            />
+            <TextInputField 
+                value={lastName} 
+                placeholder='Last name' 
+                onChangeText={setLastName}
+            />
+            <TextInputField 
+                value={email} 
+                placeholder='Email' 
+                onChangeText={setEmail}
+            />
+            <PasswordInput 
+                value={password} 
+                placeholder='Password' 
+                onChangeText={setPassword} 
+            />
+            <Spacer 
+                size={21} 
+                horizontal={false}
+            />
+            <GreenLargeButton 
+                title='Sign Up' 
+                onClick={onSubmit}
+            />
         </View>
     )
 };
