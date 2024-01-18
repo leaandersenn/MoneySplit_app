@@ -1,7 +1,9 @@
 import { Text, View, StyleSheet, Button } from "react-native";
 import { FIREBASE_AUTH } from "../../firebaseConfig";
-import SignOutButton from "../components/Buttons/SignOutButton";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+
+//------NOTE------------
+//This file is not being used, it was created to test the userContext.
 
 type RootStackParamList = {
     Home: undefined;
@@ -16,7 +18,6 @@ type RootStackParamList = {
   type Props = {
     navigation: HomeScreenNavigationProp;
   };
-  
 
 
 export default function AfterLoginScreen( {navigation}: Props) {
@@ -28,7 +29,6 @@ export default function AfterLoginScreen( {navigation}: Props) {
     return(
         <View style={styles.container}>
             <Text>Du er logget inn som: {user?.email}</Text>
-            <SignOutButton navigation={navigation} />
         </View>
     )
 }
